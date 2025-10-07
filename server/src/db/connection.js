@@ -1,0 +1,19 @@
+const mongoose = require("mongoose");
+
+const dbConnect = async () => {
+  try {
+    const isConnected = await mongoose.connect(
+      "mongodb://127.0.0.1:27017/eKharid"
+    );
+
+    if (!isConnected.ok) {
+      console.error("could not connect to mongodb://127.0.0.1:27017/eKharid");
+    } else {
+      console.log("connected to mongodb://127.0.0.1:27017/eKharid");
+    }
+  } catch (error) {
+    console.error(`database connection failed`);
+  }
+};
+
+module.exports = dbConnect;
