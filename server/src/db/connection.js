@@ -6,8 +6,8 @@ const dbConnect = async () => {
       "mongodb://127.0.0.1:27017/eKharid"
     );
 
-    if (!isConnected.ok) {
-      console.error("could not connect to mongodb://127.0.0.1:27017/eKharid");
+    if (!isConnected) {
+      console.error("could not connect to mongodb");
     } else {
       console.log("connected to mongodb://127.0.0.1:27017/eKharid");
     }
