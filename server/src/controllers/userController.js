@@ -42,4 +42,27 @@ const userRegistration = async (req, res) => {
   }
 };
 
-module.exports = { userRegistration };
+const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      console.error(`please enter email and password`);
+      res.status(204).json({ message: `please enter email and password` });
+    }
+    const userByEmail = await User.findOne({ email });
+    if (!userByEmail) {
+      console.error(`user not found`);
+      res.status(404).json({ message: `user not found` });
+    }
+    if (userByEmail.email === email && userByEmail.password === password) {
+      console.log(`user login successful`);
+
+      res.status(200).json({ message: `user login successful,\n${email}` });
+    }
+  } catch (error) {
+    console.error(`user login failed`);
+    res.status(500).json(`user login failed,\n${error}`);
+  }
+};
+
+module.exports = { userRegistration, userLogin };
