@@ -3,6 +3,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function SignupPage() {
   const [submittedData, setSubmittedData] = useState(null);
@@ -51,13 +52,19 @@ export default function SignupPage() {
                   body: JSON.stringify(values),
                 }
               );
-              await sleep(500);
+              const data = await response.json();
 
-              setSubmittedData(values);
+              if (!response.ok) {
+                throw new Error(data.message || "Something went wrong");
+              }
+
+              setSubmittedData(data);
+              alert("✅ Signup successful!");
+              resetForm();
             } catch (error) {
               console.error(`error occurred while form submission,\n${error}`);
             } finally {
-              resetForm();
+              setSubmitting(false);
             }
           }}
         >
@@ -146,7 +153,12 @@ export default function SignupPage() {
             </Form>
           )}
         </Formik>
-
+        <div className="text-sm">
+          already have an account?{" "}
+          <Link href="/login" className="underline ">
+            login here
+          </Link>
+        </div>
         {/* Show submitted data for demo */}
         {submittedData && (
           <div className="mt-6 p-3 bg-green-50 text-green-700 rounded-lg text-sm">
