@@ -52,19 +52,19 @@ export default function SignupPage() {
                   body: JSON.stringify(values),
                 }
               );
+              const data = await response.json();
 
               if (!response.ok) {
-                const errorData = await response.json(); // Attempt to read error details from response body
-                throw new Error(
-                  `HTTP error! Status: ${response.status}, Message: ${
-                    errorData.message || "Unknown error"
-                  }`
-                );
+                throw new Error(data.message || "Something went wrong");
               }
+
+              setSubmittedData(data);
+              alert("✅ Signup successful!");
+              resetForm();
             } catch (error) {
               console.error(`error occurred while form submission,\n${error}`);
             } finally {
-              resetForm();
+              setSubmitting(false);
             }
           }}
         >
@@ -155,7 +155,7 @@ export default function SignupPage() {
         </Formik>
         <div className="text-sm">
           already have an account?{" "}
-          <Link href="/login" className="underline hover:text-blue-500">
+          <Link href="/login" className="underline ">
             login here
           </Link>
         </div>

@@ -4,10 +4,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function SignupPage() {
+export default function SignInPage() {
   const [submittedData, setSubmittedData] = useState(null);
-
+  const router = useRouter();
   // ✅ Yup Validation Schema
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
@@ -46,11 +47,20 @@ export default function SignupPage() {
               );
               await sleep(500);
 
-              setSubmittedData(values);
+              const data = response.json();
+              if (!response.ok) {
+                throw new Error(data.message || "Something went wrong");
+              }
+
+              setSubmittedData(data);
+              alert("✅ Signin successful!");
+              resetForm();
+
+              router.push("/home");
             } catch (error) {
               console.error(`error occurred while form submission,\n${error}`);
             } finally {
-              resetForm();
+              setSubmitting(false);
             }
           }}
         >
@@ -102,7 +112,10 @@ export default function SignupPage() {
               </button>
               <div className="text-sm">
                 Don't have an account?{" "}
-                <Link href="/register" className="underline hover:text-blue-500">
+                <Link
+                  href="/register"
+                  className="underline hover:text-blue-500"
+                >
                   Register here
                 </Link>
               </div>
