@@ -15,12 +15,30 @@ const Counter = () => {
     <div className="flex flex-col items-center content-center bg-amber-50 text-black h-screen w-screen">
       <div className="font-bold text-2xl">Counter</div>
 
-      <button onClick={() => dispatch(increment())}>increment</button>
-      <button onClick={() => dispatch(decrement())}>decrement</button>
-      <button onClick={() => dispatch(incrementByAmount())}>
+      <button
+        className="hover:cursor-pointer"
+        onClick={() => dispatch(increment())}
+      >
+        increment
+      </button>
+      <button
+        className="hover:cursor-pointer"
+        onClick={() => dispatch(decrement())}
+      >
+        decrement
+      </button>
+      <button
+        className="hover:cursor-pointer"
+        onClick={() => dispatch(incrementByAmount())}
+      >
         incrementByAmount
       </button>
-      <button onClick={() => dispatch(reset())}>reset</button>
+      <button
+        className="hover:cursor-pointer"
+        onClick={() => dispatch(reset())}
+      >
+        reset
+      </button>
 
       <div>{value}</div>
     </div>
