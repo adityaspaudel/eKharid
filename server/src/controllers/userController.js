@@ -1,47 +1,77 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
 // user registration
 const userRegistration = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, username, email, password, confirmPassword, role } =
+      req.body;
 
-    if (!fullName || !email || !password || !role) {
-      console.error(`please enter fullName, email and password`);
-      res
-        .status(204)
-        .json({ message: `please enter fullName, email and password` });
+    // Validate required fields
+    if (
+      !fullName ||
+      !username ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Please fill in all required fields" });
     }
+
+    // Check password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    // Check duplicates
     const userByEmail = await User.findOne({ email });
-
     if (userByEmail) {
-      console.error(`email is already registered, please try another email`);
-      res.status(409).json({
-        email: `email is already registered, please try another email,\n${userByEmail.email}`,
-      });
-    } else {
-      const newUser = new User({ fullName, email, password, role });
-      await newUser.save();
-
-      console.log(
-        `new user registered, fullName:${newUser.fullName}, email:${newUser.email}`
-      );
-      res.status(201).json({
-        message: `new User registered`,
-        fullName: newUser.fullName,
-        email: newUser.email,
-      });
+      return res.status(409).json({ message: "Email is already registered" });
     }
-  } catch (error) {
-    console.error(`error occurred while registering a new user\n${error}`);
 
-    res.status(500).json({
-      message: `error occurred while registering a new user, \n${error}`,
+    const userByUsername = await User.findOne({ username });
+    if (userByUsername) {
+      return res.status(409).json({ message: "Username is already taken" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save user
+    const newUser = new User({
+      fullName,
+      username,
+      email,
+      password: hashedPassword,
+      role,
     });
+    await newUser.save();
+
+    console.log(
+      `✅ New user registered: ${newUser.fullName} (${newUser.email})`
+    );
+
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        fullName: newUser.fullName,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error while registering user:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error during registration" });
   }
 };
-
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;

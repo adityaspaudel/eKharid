@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function SignupPage() {
   const [submittedData, setSubmittedData] = useState(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // ✅ Yup Validation Schema
   const SignupSchema = Yup.object().shape({
     fullName: Yup.string()
@@ -25,6 +25,7 @@ export default function SignupPage() {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm Password is required"),
+    role: Yup.string().required("role is required"),
   });
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -62,14 +63,14 @@ export default function SignupPage() {
               if (!response.ok) {
                 throw new Error(data.message || "Something went wrong");
               }
-
+              setIsSubmitting(true);
               setSubmittedData(data);
               alert("✅ Signup successful!");
               resetForm();
             } catch (error) {
               console.error(`error occurred while form submission,\n${error}`);
             } finally {
-              setSubmitting(false);
+              setIsSubmitting(false);
             }
           }}
         >
@@ -166,11 +167,8 @@ export default function SignupPage() {
               </div>
               {/* Role */}
               <div className="flex flex-col">
-                <Field
-                  as="select"
-                  name="role"
-                  className="font-bold w-20 "
-                >
+                <Field as="select" name="role" className="font-bold w-40 ">
+                  <option value="">select a role</option>
                   <option value="buyer" default>
                     buyer
                   </option>
