@@ -13,6 +13,9 @@ export default function SignupPage() {
     fullName: Yup.string()
       .min(3, "Full name must be at least 3 characters")
       .required("Full name is required"),
+    username: Yup.string()
+      .min(3, "username must be at least 3 characters")
+      .required("username is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
@@ -28,7 +31,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow hover:shadow-gray-400 p-8">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Create an Account
         </h1>
@@ -37,6 +40,7 @@ export default function SignupPage() {
           initialValues={{
             fullName: "",
             email: "",
+            username: "",
             password: "",
             confirmPassword: "",
           }}
@@ -83,6 +87,24 @@ export default function SignupPage() {
                 />
                 <ErrorMessage
                   name="fullName"
+                  component="div"
+                  className="text-sm text-red-500 mt-1"
+                />
+              </div>
+
+              {/* Username */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Username
+                </label>
+                <Field
+                  type="text"
+                  name="username"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your username"
+                />
+                <ErrorMessage
+                  name="username"
                   component="div"
                   className="text-sm text-red-500 mt-1"
                 />
@@ -155,8 +177,8 @@ export default function SignupPage() {
         </Formik>
         <div className="text-sm">
           already have an account?{" "}
-          <Link href="/login" className="underline ">
-            login here
+          <Link href="/login" className="underline hover:text-blue-500">
+            Login here
           </Link>
         </div>
         {/* Show submitted data for demo */}

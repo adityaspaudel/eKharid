@@ -2,13 +2,16 @@
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const [submittedData, setSubmittedData] = useState(null);
   const router = useRouter();
+  const passwordRef1 = useRef();
+  const [showHidePassword, setShowHidePassword] = useState(false);
+  const [inputType, setInputType] = useState("text");
   // ✅ Yup Validation Schema
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
@@ -20,10 +23,18 @@ export default function SignInPage() {
   });
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
+  const handleClick = () => {
+    if (showHidePassword == false) {
+      setShowHidePassword(true);
+      setInputType("text");
+    } else {
+      setShowHidePassword(false);
+      setInputType("password");
+    }
+  };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-white transition shadow hover:shadow-gray-400  rounded-2xl  p-8">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Login
         </h1>
@@ -90,11 +101,19 @@ export default function SignInPage() {
                   Password
                 </label>
                 <Field
-                  type="password"
+                  type={inputType}
                   name="password"
                   className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter password"
+                  ref={passwordRef1}
                 />
+                <div onClick={handleClick} className="text-sm">
+                  {showHidePassword == false ? (
+                    <div>🐵 show</div>
+                  ) : (
+                    <div>🙈 hide</div>
+                  )}
+                </div>
                 <ErrorMessage
                   name="password"
                   component="div"
