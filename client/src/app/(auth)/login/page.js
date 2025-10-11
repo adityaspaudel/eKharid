@@ -43,6 +43,7 @@ export default function SignInPage() {
           initialValues={{
             email: "",
             password: "",
+            role: "",
           }}
           validationSchema={SignupSchema}
           onSubmit={async (values, { resetForm }) => {
@@ -58,7 +59,8 @@ export default function SignInPage() {
               );
               await sleep(500);
 
-              const data = response.json();
+              const data = await response.json();
+              console.log("response, ", data);
               if (!response.ok) {
                 throw new Error(data.message || "Something went wrong");
               }
@@ -67,9 +69,9 @@ export default function SignInPage() {
               alert("✅ Signin successful!");
               resetForm();
 
-              router.push("/home");
+              router.push(`/${data.user._id}/home`);
             } catch (error) {
-              console.error(`error occurred while form submission,\n${error}`);
+              console.error(`error occurred while form submission,\n ${error}`);
             } finally {
               setSubmitting(false);
             }
@@ -119,6 +121,16 @@ export default function SignInPage() {
                   component="div"
                   className="text-sm text-red-500 mt-1"
                 />
+              </div>
+
+              {/* Role */}
+              <div className="flex flex-col">
+                <Field as="select" name="role" className="font-bold w-20 ">
+                  <option value="buyer" default>
+                    buyer
+                  </option>
+                  <option value="seller">seller</option>
+                </Field>
               </div>
 
               {/* Submit Button */}

@@ -43,6 +43,7 @@ export default function SignupPage() {
             username: "",
             password: "",
             confirmPassword: "",
+            role: "",
           }}
           validationSchema={SignupSchema}
           onSubmit={async (values, { resetForm }) => {
@@ -163,7 +164,19 @@ export default function SignupPage() {
                   className="text-sm text-red-500 mt-1"
                 />
               </div>
-
+              {/* Role */}
+              <div className="flex flex-col">
+                <Field
+                  as="select"
+                  name="role"
+                  className="font-bold w-20 "
+                >
+                  <option value="buyer" default>
+                    buyer
+                  </option>
+                  <option value="seller">seller</option>
+                </Field>
+              </div>
               {/* Submit Button */}
               <button
                 type="submit"
