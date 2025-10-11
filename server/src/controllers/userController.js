@@ -5,9 +5,9 @@ const User = require("../models/userModel");
 // user registration
 const userRegistration = async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, role } = req.body;
 
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !role) {
       console.error(`please enter fullName, email and password`);
       res
         .status(204)
@@ -21,7 +21,7 @@ const userRegistration = async (req, res) => {
         email: `email is already registered, please try another email,\n${userByEmail.email}`,
       });
     } else {
-      const newUser = new User({ fullName, email, password });
+      const newUser = new User({ fullName, email, password, role });
       await newUser.save();
 
       console.log(
@@ -50,14 +50,19 @@ const userLogin = async (req, res) => {
       res.status(204).json({ message: `please enter email and password` });
     }
     const userByEmail = await User.findOne({ email });
+
     if (!userByEmail) {
       console.error(`user not found`);
       res.status(404).json({ message: `user not found` });
-    }
-    if (userByEmail.email === email && userByEmail.password === password) {
-      console.log(`user login successful`);
+    } else {
+      if (userByEmail.email === email && userByEmail.password === password) {
+        console.log(`user login successful`, userByEmail);
 
-      res.status(200).json({ message: `user login successful,\n${email}` });
+        res.status(200).json({
+          message: `user login successful,\n${email}`,
+          user: userByEmail,
+        });
+      }
     }
   } catch (error) {
     console.error(`user login failed`);
