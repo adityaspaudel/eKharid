@@ -25,7 +25,6 @@ export default function SignInPage() {
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  
   const handleClick = () => {
     if (showHidePassword == false) {
       setShowHidePassword(true);
@@ -71,7 +70,12 @@ export default function SignInPage() {
               alert("✅ Signin successful!");
               resetForm();
 
-              router.push(`/${data.user._id}/home`);
+              if (data.user.role === "buyer") {
+                router.push(`/buyer/${data.user._id}/home`);
+              }
+              if (data.user.role === "seller") {
+                router.push(`/seller/${data.user._id}/home`);
+              }
             } catch (error) {
               console.error(`error occurred while form submission,\n ${error}`);
             } finally {
