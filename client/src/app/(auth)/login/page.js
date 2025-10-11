@@ -11,7 +11,8 @@ export default function SignInPage() {
   const router = useRouter();
   const passwordRef1 = useRef();
   const [showHidePassword, setShowHidePassword] = useState(false);
-  const [inputType, setInputType] = useState("text");
+  const [inputType, setInputType] = useState("password");
+
   // ✅ Yup Validation Schema
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
@@ -23,6 +24,8 @@ export default function SignInPage() {
   });
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  
   const handleClick = () => {
     if (showHidePassword == false) {
       setShowHidePassword(true);
@@ -43,7 +46,6 @@ export default function SignInPage() {
           initialValues={{
             email: "",
             password: "",
-            role: "",
           }}
           validationSchema={SignupSchema}
           onSubmit={async (values, { resetForm }) => {
@@ -121,16 +123,6 @@ export default function SignInPage() {
                   component="div"
                   className="text-sm text-red-500 mt-1"
                 />
-              </div>
-
-              {/* Role */}
-              <div className="flex flex-col">
-                <Field as="select" name="role" className="font-bold w-20 ">
-                  <option value="buyer" default>
-                    buyer
-                  </option>
-                  <option value="seller">seller</option>
-                </Field>
               </div>
 
               {/* Submit Button */}

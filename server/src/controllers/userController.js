@@ -81,18 +81,18 @@ const userLogin = async (req, res) => {
     }
     const userByEmail = await User.findOne({ email });
 
-    if (!userByEmail) {
+    const isMatch = await bcrypt.compare(password, userByEmail.password);
+
+    if (!isMatch) {
       console.error(`user not found`);
       res.status(404).json({ message: `user not found` });
     } else {
-      if (userByEmail.email === email && userByEmail.password === password) {
-        console.log(`user login successful`, userByEmail);
+      console.log(`user login successful`, userByEmail);
 
-        res.status(200).json({
-          message: `user login successful,\n${email}`,
-          user: userByEmail,
-        });
-      }
+      res.status(200).json({
+        message: `user login successful,\n${email}`,
+        user: userByEmail,
+      });
     }
   } catch (error) {
     console.error(`user login failed`);
