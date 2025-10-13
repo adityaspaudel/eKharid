@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function ProductUploadPage({ sellerId }) {
+export default function AddProducts({ sellerId }) {
   console.log('sellerId', sellerId);
   const [product, setProduct] = useState({
     title: '',
@@ -33,7 +33,7 @@ export default function ProductUploadPage({ sellerId }) {
     const previewUrls = files.map((file) => URL.createObjectURL(file));
     setPreviewImages(previewUrls);
   };
-  
+
   useEffect(() => {
     const fetchSellerDetails = async () => {
       try {
@@ -96,8 +96,8 @@ export default function ProductUploadPage({ sellerId }) {
   };
 
   return (
-    <main className="p-10 flex flex-col gap-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-center">🛍️ Upload Product</h1>
+    <main className="p-10 flex flex-col gap-6 max-w-96 mx-auto ">
+      <h1 className="text-3xl font-bold text-center">🛍️ Add Product</h1>
 
       {message && (
         <div className="bg-green-200 text-green-800 p-2 rounded">{message}</div>
@@ -191,7 +191,7 @@ export default function ProductUploadPage({ sellerId }) {
           disabled={loading}
           className="bg-green-600 text-white py-2 rounded"
         >
-          {loading ? 'Uploading...' : 'Upload Product'}
+          {loading ? 'adding...' : 'Add Product'}
         </button>
       </form>
     </main>

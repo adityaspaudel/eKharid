@@ -11,4 +11,5 @@ router.post('/user/userRegistration', userRegistration);
 router.post('/user/userLogin', userLogin);
 router.get('/seller/:sellerId/getSellerDetails', getSellerDetails);
 
+
 module.exports = router;

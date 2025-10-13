@@ -2,8 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const Product = require('../models/productModel.js');
-
+const Product = require('../models/productModel');
+const User = require('../models/userModel');
 // Ensure uploads folder exists
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -50,12 +50,10 @@ const addProducts = async (req, res) => {
 
     await newProduct.save();
 
-    res
-      .status(201)
-      .json({
-        message: '✅ Product uploaded successfully!',
-        product: newProduct,
-      });
+    res.status(201).json({
+      message: '✅ Product added successfully!',
+      product: newProduct,
+    });
   } catch (error) {
     console.error(error);
     res
@@ -67,8 +65,12 @@ const addProducts = async (req, res) => {
 // Get all products
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { sellerId } = req.params;
+    const products = await Product.find({ seller: sellerId });
+
     res.status(200).json(products);
+
+    console.log(products);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products' });
   }
