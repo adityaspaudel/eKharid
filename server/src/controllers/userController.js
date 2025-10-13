@@ -1,7 +1,7 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
+const express = require('express');
+const mongoose = require('mongoose');
+const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
 // user registration
 const userRegistration = async (req, res) => {
@@ -20,23 +20,23 @@ const userRegistration = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ message: "Please fill in all required fields" });
+        .json({ message: 'Please fill in all required fields' });
     }
 
     // Check password match
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
+      return res.status(400).json({ message: 'Passwords do not match' });
     }
 
     // Check duplicates
     const userByEmail = await User.findOne({ email });
     if (userByEmail) {
-      return res.status(409).json({ message: "Email is already registered" });
+      return res.status(409).json({ message: 'Email is already registered' });
     }
 
     const userByUsername = await User.findOne({ username });
     if (userByUsername) {
-      return res.status(409).json({ message: "Username is already taken" });
+      return res.status(409).json({ message: 'Username is already taken' });
     }
 
     // Hash password
@@ -57,7 +57,7 @@ const userRegistration = async (req, res) => {
     );
 
     return res.status(201).json({
-      message: "User registered successfully",
+      message: 'User registered successfully',
       user: {
         fullName: newUser.fullName,
         username: newUser.username,
@@ -66,10 +66,10 @@ const userRegistration = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error while registering user:", error);
+    console.error('❌ Error while registering user:', error);
     return res
       .status(500)
-      .json({ message: "Server error during registration" });
+      .json({ message: 'Server error during registration' });
   }
 };
 const userLogin = async (req, res) => {
@@ -100,4 +100,18 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { userRegistration, userLogin };
+const getSellerDetails = async (req, res) => {
+  try {
+    const seller = await User.findById(req.params.sellerId).select(
+      'fullName email'
+    );
+    if (!seller) return res.status(404).json({ message: 'Seller not found' });
+    res.json(seller);
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(500)
+      .json({ message: 'Error fetching seller', error: error.message });
+  }
+};
+module.exports = { userRegistration, userLogin, getSellerDetails };
