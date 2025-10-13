@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import ProductUploadPage from "@/components/productUploadPage";
 import React from "react";
