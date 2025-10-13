@@ -1,12 +1,14 @@
-"use client";
+'use client';
 
-import ProductUploadPage from "@/components/productUploadPage";
-import React from "react";
+import ProductUploadPage from '@/components/productUploadPage';
+import { useParams } from 'next/navigation';
+import React from 'react';
 
 const SellerHome = () => {
+  const { sellerId } = useParams();
   return (
     <div>
-      <ProductUploadPage />
+      <ProductUploadPage sellerId={sellerId} />
     </div>
   );
 };

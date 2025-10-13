@@ -1,22 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-export default function ProductUploadPage() {
+export default function ProductUploadPage({ sellerId }) {
+  console.log('sellerId', sellerId);
   const [product, setProduct] = useState({
-    title: "",
-    description: "",
-    price: "",
-    category: "",
-    stock: "",
-    sellerName: "",
-    sellerEmail: "",
+    title: '',
+    description: '',
+    price: '',
+    category: '',
+    stock: '',
+    sellerName: '',
+    sellerEmail: '',
   });
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   // Handle input changes
   const handleChange = (e) => {
@@ -32,12 +33,34 @@ export default function ProductUploadPage() {
     const previewUrls = files.map((file) => URL.createObjectURL(file));
     setPreviewImages(previewUrls);
   };
+  
+  useEffect(() => {
+    const fetchSellerDetails = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:8000/seller/${sellerId}/getSellerDetails`
+        );
+
+        console.log('Seller data', data);
+
+        setProduct((prev) => ({
+          ...prev,
+          sellerName: data.fullName,
+          sellerEmail: data.email,
+        }));
+      } catch (error) {
+        console.error('Failed to load seller details:', error);
+      }
+    };
+
+    if (sellerId) fetchSellerDetails();
+  }, [sellerId]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
+    setMessage('');
 
     try {
       const formData = new FormData();
@@ -45,30 +68,28 @@ export default function ProductUploadPage() {
         formData.append(key, product[key]);
       }
       images.forEach((file) => {
-        formData.append("images", file);
+        formData.append('images', file);
       });
 
       const res = await axios.post(
-        "http://localhost:8000/seller/addProducts",
+        `http://localhost:8000/seller/${sellerId}/addProducts`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       setMessage(res.data.message);
       setProduct({
-        title: "",
-        description: "",
-        price: "",
-        category: "",
-        stock: "",
-        sellerName: "",
-        sellerEmail: "",
+        title: '',
+        description: '',
+        price: '',
+        category: '',
+        stock: '',
       });
       setImages([]);
       setPreviewImages([]);
     } catch (err) {
       console.error(err);
-      setMessage(err.response?.data?.message || "Upload failed");
+      setMessage(err.response?.data?.message || 'Upload failed');
     } finally {
       setLoading(false);
     }
@@ -131,7 +152,7 @@ export default function ProductUploadPage() {
           value={product.sellerName}
           onChange={handleChange}
           className="border p-2 rounded"
-          required
+          disabled
         />
         <input
           name="sellerEmail"
@@ -140,7 +161,7 @@ export default function ProductUploadPage() {
           value={product.sellerEmail}
           onChange={handleChange}
           className="border p-2 rounded"
-          required
+          disabled
         />
 
         <input
@@ -170,7 +191,7 @@ export default function ProductUploadPage() {
           disabled={loading}
           className="bg-green-600 text-white py-2 rounded"
         >
-          {loading ? "Uploading..." : "Upload Product"}
+          {loading ? 'Uploading...' : 'Upload Product'}
         </button>
       </form>
     </main>
