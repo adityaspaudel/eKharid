@@ -45,8 +45,8 @@ export default function AddProducts({ sellerId }) {
 
         setProduct((prev) => ({
           ...prev,
-          sellerName: data.seller.fullName,
-          sellerEmail: data.seller.email,
+          sellerName: data?.seller.fullName,
+          sellerEmail: data?.seller.email,
         }));
       } catch (error) {
         console.error('Failed to load seller details:', error);
