@@ -106,7 +106,7 @@ const getSellerDetails = async (req, res) => {
       'fullName email'
     );
     if (!seller) return res.status(404).json({ message: 'Seller not found' });
-    res.json(seller);
+    res.status(200).json({ seller });
   } catch (error) {
     console.error(error.message);
     res
