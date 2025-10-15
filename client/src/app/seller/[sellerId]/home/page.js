@@ -38,23 +38,8 @@ const SellerHome = () => {
       fetchProducts();
     }
   }, [sellerId]);
-  // // update products
-  //   const editProductAPI = (productId) => {
-  //     const fetchProducts = async () => {
-  //       try {
-  //         const { data } = await axios.put(
-  //           `http://localhost:8000/product/${productId}/updateProduct`,
-  //           {
-  //             headers: { 'Content-Type': 'application/json' },
-  //             body: JSON.stringify(''),
-  //           }
-  //         );
-  //         console.log('update,data:');
-  //       } catch (error) {}
-  //     };
-  //     console.log('productId: ', productId);
-  //     fetchProducts();
-  //   };
+  // update products
+  // const editProductAPI = (productId) => {};
 
   const handleEdit = (id) => {
     setEditingProductId(id);
@@ -62,7 +47,25 @@ const SellerHome = () => {
   const handleChange = (e, id) => {
     setProductChange({ ...productChange, [e.target.name]: e.target.value });
   };
-  const handleSave = (id) => {};
+
+  const handleSaveAndUpdateProduct = (productId) => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.put(
+          `http://localhost:8000/product/${productId}/updateProduct`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productChange),
+          }
+        );
+        console.log('updated,data: ', data);
+      } catch (error) {}
+    };
+    console.log('productId: ', productId);
+    fetchProducts();
+  };
+
+  const updateProduct = () => {};
   const deleteProduct = () => {};
   return (
     <div className="bg-amber-50 text-black">
@@ -112,63 +115,76 @@ const SellerHome = () => {
                       </button>
                       <button className="cursor-pointer">delete</button>
                     </div>
-                    {val._id == editingProductId ? (
-                      <div>
-                        <div>edit {editingProductId}</div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">title:</label>{' '}
-                          <input
-                            name="title"
-                            value={productChange.title}
-                            onChange={(e) => handleChange(e, val?.title)}
-                          />
+
+                    {/* edit products  */}
+
+                    <div className="bg-gray-400">
+                      {val._id == editingProductId ? (
+                        <div>
+                          <div className="font-black">
+                            edit product{editingProductId}
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">title:</label>{' '}
+                            <input
+                              name="title"
+                              value={productChange.title}
+                              onChange={(e) => handleChange(e, val?.title)}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">description:</label>{' '}
+                            <input
+                              name="description"
+                              value={productChange.description}
+                              onChange={(e) =>
+                                handleChange(e, val?.description)
+                              }
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">price:</label>{' '}
+                            <input
+                              name="price"
+                              value={productChange.price}
+                              onChange={(e) => handleChange(e, val?.price)}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">category:</label>{' '}
+                            <input
+                              name="category"
+                              value={productChange.category}
+                              onChange={(e) => handleChange(e, val?.category)}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">stock:</label>
+                            <input
+                              name="stock"
+                              value={productChange.stock}
+                              onChange={(e) => handleChange(e, val?.stock)}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <label htmlFor="">seller:</label>{' '}
+                            <input val={val?.seller} disabled />
+                          </div>
+                          <div className="flex gap-2 ">
+                            <button
+                              onClick={handleSaveAndUpdateProduct(
+                                editingProductId
+                              )}
+                            >
+                              update
+                            </button>
+                            <button>cancel</button>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">description:</label>{' '}
-                          <input
-                            name="description"
-                            value={productChange.description}
-                            onChange={(e) => handleChange(e, val?.description)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">price:</label>{' '}
-                          <input
-                            name="price"
-                            value={productChange.price}
-                            onChange={(e) => handleChange(e, val?.price)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">category:</label>{' '}
-                          <input
-                            name="category"
-                            value={productChange.category}
-                            onChange={(e) => handleChange(e, val?.category)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">stock:</label>
-                          <input
-                            name="stock"
-                            value={productChange.stock}
-                            onChange={(e) => handleChange(e, val?.stock)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <label htmlFor="">seller:</label>{' '}
-                          <input val={val?.seller} disabled />
-                        </div>
-                        <div className="flex gap-2 ">
-                          <button onClick={handleSave(editingProductId)}>
-                            update
-                          </button>
-                          <button>cancel</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -176,8 +192,6 @@ const SellerHome = () => {
           </div>
         )}
       </div>
-
-      {/* edit products  */}
 
       <pre>{JSON.stringify(products, 2, 2)}</pre>
     </div>
