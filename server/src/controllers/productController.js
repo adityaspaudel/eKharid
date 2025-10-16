@@ -76,4 +76,26 @@ const getProducts = async (req, res) => {
   }
 };
 
-module.exports = { upload, addProducts, getProducts };
+const updateProduct = async (req, res) => {
+  try {
+    const { title, description, price, stock, category } = req.body;
+    const { productId } = req.params;
+
+    const updatedProduct = await Product.findByIdAndUpdate(productId, {
+      title,
+      description,
+      price,
+      stock,
+      category,
+    });
+    await updatedProduct.save();
+
+    res
+      .status(200)
+      .json({ message: 'product Updated successfully', updatedProduct });
+  } catch (error) {
+    console.error(`failed to update product`);
+    res.json({ message: 'failed to update product' });
+  }
+};
+module.exports = { upload, addProducts, getProducts, updateProduct };

@@ -1,29 +1,29 @@
-# eKharid
 Ecommerce website
-
+# eKharid
+Find what you love
 
 ## 🛠 Tech Stack, Libraries & Tools
-**Frontend:**  
-- React.js (Hooks & Context API)  
-- Next.js (App Router)  
-- Tailwind CSS  
+**Frontend:**
+- React.js (Hooks & Context API)
+- Next.js (App Router)
+- Tailwind CSS
 
 
-**Backend:**  
-- Node.js & Express.js  
-- MongoDB with Mongoose ORM  
-- JWT Authentication & bcrypt  
-- Nodemailer  
+**Backend:**
+- Node.js & Express.js
+- MongoDB with Mongoose ORM
+- JWT Authentication & bcrypt
+- Nodemailer
 
-**State Management & Forms:**  
-- Redux Toolkit  
-- Formik & Yup  
+**State Management & Forms:**
+- Redux Toolkit
+- Formik & Yup
 
-**Extras & Utilities:**  
+**Extras & Utilities:**
 <!-- - Socket.io (Real-time notifications)   -->
 <!-- - Cloudinary / AWS S3 (Image upload)   -->
-- VSCode, Git & GitHub  
-- Postman (API testing)  
+- VSCode, Git & GitHub
+- Postman (API testing)
 
 ---
 
@@ -33,17 +33,17 @@ Ecommerce website
 - [x] Setup MongoDB & Mongoose connection
 - [x] Create client folder with React & Next.js
 - [x] Setup Tailwind CSS
-- [ ] Configure environment variables (`.env`)
+- [x] Configure environment variables (`.env`)
 - [x] Setup basic folder structure (client/src, server/src)
 
 ---
 
 ## Phase 2: User Authentication 🔐
-- [ ] User signup
-- [ ] User login (JWT + bcrypt)
-- [ ] Password hashing & authentication middleware
+- [x] User signup
+- [x] User login (JWT + bcrypt)
+- [x] Password hashing & authentication middleware
+- [x] Role-based access (seller vs buyer)
 - [ ] Profile page (view & update info)
-- [ ] Role-based access (admin vs user)
 - [ ] Password reset via email (Nodemailer)
 
 ---
@@ -51,7 +51,7 @@ Ecommerce website
 ## Phase 3: Product Management 🛍️
 - [ ] Product model (MongoDB)
 - [ ] CRUD operations for products (admin)
-- [ ] Upload product images (Cloudinary or AWS S3)
+- [ ] Upload product images (multer)
 - [ ] Product listing page
 - [ ] Product detail page
 - [ ] Search & filter products (category, price, rating)
@@ -59,12 +59,12 @@ Ecommerce website
 ---
 
 ## Phase 4: Shopping Cart & Checkout 🛒
-- [ ] Add product to cart
-- [ ] Update quantity / remove items
-- [ ] Cart summary page
-- [ ] Checkout process
+- [x] Add product to cart
+- [x] Update quantity / remove items
+- [x] Cart summary page
+- [x] Checkout process
 - [ ] Order creation & saving in database
-- [ ] Payment integration (Stripe or PayPal)
+- [ ] Payment integration ( esewa )
 
 ---
 
