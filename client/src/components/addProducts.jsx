@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function AddProducts({ sellerId }) {
+function AddProducts({ sellerId }) {
   console.log('sellerId', sellerId);
+
   const [product, setProduct] = useState({
     title: '',
     description: '',
@@ -19,84 +20,84 @@ export default function AddProducts({ sellerId }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Handle input changes
+  // ✅ handleChange — no need for preventDefault in input handlers
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  // Handle image selection
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
-
-    // Show image preview
-    const previewUrls = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages(previewUrls);
+    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
   };
 
-  useEffect(() => {
-    const fetchSellerDetails = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:8000/seller/${sellerId}/getSellerDetails`
-        );
+  // ✅ Memoized seller details fetch
+  const fetchSellerDetails = useCallback(async () => {
+    if (!sellerId) return;
+    try {
+      const { data } = await axios.get(
+        `http://localhost:8000/seller/${sellerId}/getSellerDetails`
+      );
+      console.log('Seller data:', data);
 
-        console.log('Seller data', data);
-
-        setProduct((prev) => ({
-          ...prev,
-          sellerName: data?.seller.fullName,
-          sellerEmail: data?.seller.email,
-        }));
-      } catch (error) {
-        console.error('Failed to load seller details:', error);
-      }
-    };
-
-    if (sellerId) fetchSellerDetails();
+      setProduct((prev) => ({
+        ...prev,
+        sellerName: data?.seller.fullName || '',
+        sellerEmail: data?.seller.email || '',
+      }));
+    } catch (error) {
+      console.error('Failed to load seller details:', error);
+    }
   }, [sellerId]);
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage('');
+  useEffect(() => {
+    fetchSellerDetails();
+  }, [fetchSellerDetails]);
 
-    try {
-      const formData = new FormData();
-      for (const key in product) {
-        formData.append(key, product[key]);
+  // ✅ Stable submit handler
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage('');
+
+      try {
+        const formData = new FormData();
+        Object.entries(product).forEach(([key, value]) =>
+          formData.append(key, value)
+        );
+        images.forEach((file) => formData.append('images', file));
+
+        const { data } = await axios.post(
+          `http://localhost:8000/seller/${sellerId}/addProducts`,
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+
+        setMessage(data.message);
+        setProduct({
+          title: '',
+          description: '',
+          price: '',
+          category: '',
+          stock: '',
+          sellerName: product.sellerName,
+          sellerEmail: product.sellerEmail,
+        });
+        setImages([]);
+        setPreviewImages([]);
+      } catch (err) {
+        console.error(err);
+        setMessage(err.response?.data?.message || 'Upload failed');
+      } finally {
+        setLoading(false);
       }
-      images.forEach((file) => {
-        formData.append('images', file);
-      });
-
-      const res = await axios.post(
-        `http://localhost:8000/seller/${sellerId}/addProducts`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-
-      setMessage(res.data.message);
-      setProduct({
-        title: '',
-        description: '',
-        price: '',
-        category: '',
-        stock: '',
-      });
-      setImages([]);
-      setPreviewImages([]);
-    } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.message || 'Upload failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [sellerId, product, images]
+  );
 
   return (
-    <main className="p-10 flex flex-col gap-6 max-w-96 mx-auto ">
+    <main className="p-10 flex flex-col gap-6 max-w-96 mx-auto">
       <h1 className="text-3xl font-bold text-center">🛍️ Add Product</h1>
 
       {message && (
@@ -104,53 +105,23 @@ export default function AddProducts({ sellerId }) {
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          name="title"
-          placeholder="Product Title"
-          value={product.title}
-          onChange={handleChange}
-          className="border p-2 rounded"
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={product.description}
-          onChange={handleChange}
-          className="border p-2 rounded"
-          required
-        />
-        <input
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={product.price}
-          onChange={handleChange}
-          className="border p-2 rounded"
-          required
-        />
-        <input
-          name="category"
-          placeholder="Category"
-          value={product.category}
-          onChange={handleChange}
-          className="border p-2 rounded"
-          required
-        />
-        <input
-          name="stock"
-          type="number"
-          placeholder="Stock Quantity"
-          value={product.stock}
-          onChange={handleChange}
-          className="border p-2 rounded"
-          required
-        />
+        {['title', 'description', 'price', 'category', 'stock'].map((field) => (
+          <input
+            key={field}
+            name={field}
+            type={field === 'price' || field === 'stock' ? 'number' : 'text'}
+            placeholder={field[0].toUpperCase() + field.slice(1)}
+            value={product[field]}
+            onChange={handleChange}
+            className="border p-2 rounded"
+            required
+          />
+        ))}
+
         <input
           name="sellerName"
           placeholder="Seller Name"
           value={product.sellerName}
-          onChange={handleChange}
           className="border p-2 rounded"
           disabled
         />
@@ -159,7 +130,6 @@ export default function AddProducts({ sellerId }) {
           type="email"
           placeholder="Seller Email"
           value={product.sellerEmail}
-          onChange={handleChange}
           className="border p-2 rounded"
           disabled
         />
@@ -197,3 +167,5 @@ export default function AddProducts({ sellerId }) {
     </main>
   );
 }
+
+export default memo(AddProducts);
