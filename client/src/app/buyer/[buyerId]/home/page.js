@@ -2,10 +2,11 @@
 
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 const BuyerHome = () => {
   const { buyerId } = useParams();
-  const [products, setProducts] = useState(null);
+  const [productsList, setProductsList] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const getAllProducts = useCallback(async () => {
@@ -16,10 +17,10 @@ const BuyerHome = () => {
         "http://localhost:8000/product/getAllProducts"
       );
 
-      const data = await response.data;
+      const data = await response.json();
       console.log("All products fetched:", data);
 
-      setProducts(data);
+      setProductsList(data);
     } catch (err) {
       console.error("Error fetching products:", err);
       setError("Failed to load products. Please try again.");
@@ -38,13 +39,36 @@ const BuyerHome = () => {
     router.push("/login");
   };
   return (
-    <div>
-      <div className="bg-white h-screen w-screen text-black"> {buyerId}</div>
+    <div className="bg-white min-h-screen w-screen text-black">
+      <div> {buyerId}</div>
 
+      {productsList && (
+        <div>
+          {productsList.products.map((value, index) => (
+            <div key={value._id}>
+              <div>{value?.description}</div>
+              <div>{value?.price}</div>
+              <div>{value?.category}</div>
+              <div>{value?.seller}</div>
+              <div>
+                {value?.images.map((v, i) => (
+                  <div key={v._id}>
+                    <Image
+                      src={`http://localhost:8000${v?.imageUrl}`}
+                      alt="image"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="bg-white text-black">
-        {products !== null && <div>{JSON.stringify(products, 2, 2)}</div>}
+        {/* {JSON.stringify(productsList)} */}
 
-        {products?.message}
         <button
           onClick={handleLogout}
           className="bg-red-400 shadow transition hover:shadow-md text-white hover:bg-red-500 px-2 rounded-sm"
