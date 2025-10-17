@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignInPage() {
   const [submittedData, setSubmittedData] = useState(null);
   const router = useRouter();
   const passwordRef1 = useRef();
   const [showHidePassword, setShowHidePassword] = useState(false);
-  const [inputType, setInputType] = useState("password");
+  const [inputType, setInputType] = useState('password');
 
   // ✅ Yup Validation Schema
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
+      .email('Invalid email address')
+      .required('Email is required'),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
   });
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -28,10 +28,10 @@ export default function SignInPage() {
   const handleClick = () => {
     if (showHidePassword == false) {
       setShowHidePassword(true);
-      setInputType("text");
+      setInputType('text');
     } else {
       setShowHidePassword(false);
-      setInputType("password");
+      setInputType('password');
     }
   };
   return (
@@ -43,37 +43,37 @@ export default function SignInPage() {
 
         <Formik
           initialValues={{
-            email: "",
-            password: "",
+            email: '',
+            password: '',
           }}
           validationSchema={SignupSchema}
           onSubmit={async (values, { resetForm }) => {
             try {
-              console.log("✅ Submitted Values:", values);
+              console.log('✅ Submitted Values:', values);
               const response = await fetch(
-                "http://localhost:8000/user/userLogin",
+                'http://localhost:8000/user/userLogin',
                 {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(values),
                 }
               );
               await sleep(500);
 
               const data = await response.json();
-              console.log("response, ", data);
+              console.log('response, ', data);
               if (!response.ok) {
-                throw new Error(data.message || "Something went wrong");
+                throw new Error(data.message || 'Something went wrong');
               }
 
               setSubmittedData(data);
-              alert("✅ Signin successful!");
+              alert('✅ Signin successful!');
               resetForm();
 
-              if (data.user.role === "buyer") {
+              if (data.user.role === 'buyer') {
                 router.push(`/buyer/${data.user._id}/home`);
               }
-              if (data.user.role === "seller") {
+              if (data.user.role === 'seller') {
                 router.push(`/seller/${data.user._id}/home`);
               }
             } catch (error) {
@@ -135,10 +135,10 @@ export default function SignInPage() {
                 disabled={isSubmitting}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
               >
-                {isSubmitting ? "Signing In..." : "Sign In"}
+                {isSubmitting ? 'Signing In...' : 'Sign In'}
               </button>
               <div className="text-sm">
-                Don't have an account?{" "}
+                Dont have an account?{' '}
                 <Link
                   href="/register"
                   className="underline hover:text-blue-500"
