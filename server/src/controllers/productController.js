@@ -1,14 +1,14 @@
-const express = require('express');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
-const Product = require('../models/productModel');
-const User = require('../models/userModel');
+const express = require("express");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const Product = require("../models/productModel");
+const User = require("../models/userModel");
 // Ensure uploads folder exists
-const uploadDir = path.join(__dirname, '../uploads');
+const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
-  console.log('📁 Created upload directory:', uploadDir);
+  console.log("📁 Created upload directory:", uploadDir);
 }
 
 // Multer setup
@@ -27,7 +27,7 @@ const addProducts = async (req, res) => {
     const seller = await User.findById(sellerId);
 
     if (!seller) {
-      return res.status(404).json({ message: 'Seller not found' });
+      return res.status(404).json({ message: "Seller not found" });
     }
 
     // Upload images (local upload — adjust for Cloudinary/S3 later)
@@ -51,14 +51,14 @@ const addProducts = async (req, res) => {
     await newProduct.save();
 
     res.status(201).json({
-      message: '✅ Product added successfully!',
+      message: "✅ Product added successfully!",
       product: newProduct,
     });
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: 'Product creation failed', error: error.message });
+      .json({ message: "Product creation failed", error: error.message });
   }
 };
 
@@ -72,7 +72,7 @@ const getProducts = async (req, res) => {
 
     console.log(products);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch products' });
+    res.status(500).json({ message: "Failed to fetch products" });
   }
 };
 
@@ -88,16 +88,39 @@ const updateProduct = async (req, res) => {
     );
 
     if (!updatedProduct) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     res.status(200).json({
-      message: 'Product updated successfully',
+      message: "Product updated successfully",
       updatedProduct,
     });
   } catch (error) {
-    console.error('Failed to update product:', error);
-    res.status(500).json({ message: 'Failed to update product' });
+    console.error("Failed to update product:", error);
+    res.status(500).json({ message: "Failed to update product" });
   }
 };
-module.exports = { upload, addProducts, getProducts, updateProduct };
+const getAllProducts = async (req, res) => {
+  try {
+    const allProducts = await Product.find({});
+
+    res.status(200).json({
+      message: "All products fetched successfully",
+      products: allProducts,
+    });
+  } catch (error) {
+    console.error("Error getting all products:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch products due to a server error.",
+      error: error.message || "Unknown error",
+    });
+  }
+};
+module.exports = {
+  upload,
+  addProducts,
+  getProducts,
+  updateProduct,
+  getAllProducts,
+};
