@@ -40,24 +40,26 @@ const BuyerHome = () => {
   };
   return (
     <div className="bg-white min-h-screen w-screen text-black">
-      <div> {buyerId}</div>
+      {/* <div> {buyerId}</div> */}
 
       {productsList && (
-        <div>
+        <div className="flex gap-2 flex-wrap w-64">
           {productsList.products.map((value, index) => (
-            <div key={value._id}>
+            <div key={value._id} className="bg-amber-300  ">
+              <div className="font-bold">{value?.title}</div>
               <div>{value?.description}</div>
               <div>{value?.price}</div>
               <div>{value?.category}</div>
               <div>{value?.seller}</div>
-              <div>
+              <div className="flex  gap-2 snap-x scroll-pl-48 w-full">
                 {value?.images.map((v, i) => (
-                  <div key={v._id}>
+                  <div key={v._id} className="object-cover w-20 h-30">
                     <Image
+                      className="object-cover"
                       src={`http://localhost:8000${v?.imageUrl}`}
                       alt="image"
-                      height={100}
-                      width={100}
+                      height={120}
+                      width={80}
                     />
                   </div>
                 ))}
