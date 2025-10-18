@@ -5,6 +5,7 @@ import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SellerHome() {
   const { sellerId } = useParams();
@@ -99,23 +100,23 @@ export default function SellerHome() {
     router.push("/login");
   };
   return (
-    <div className="bg-amber-500 text-black  p-6 flex flex-col gap-2 w-full">
+    <div className="bg-amber-200 text-black  p-6 flex flex-col gap-2 w-full">
       <AddProducts sellerId={sellerId} />
       <h1 className="text-2xl font-bold mt-4 mb-2">My Product List</h1>
 
-      <div className="flex  gap-2 content-center items-center flex-wrap">
+      <div className="flex gap-2 content-center items-center flex-wrap">
         {products.length > 0 ? (
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-1">
             {products.map((val) => (
               <div
                 key={val._id}
-                className=" bg-orange-100 rounded-md shadow hover:shadow-md transition  w-48 h-80 border-0 overflow-scroll text-xs"
+                className=" bg-orange-100 rounded-md shadow hover:shadow-md transition  w-64 h-80 border-0 overflow-scroll text-xs"
               >
                 <div className="flex flex-col gap-2">
                   <Image
                     src={`http://localhost:8000${val.images[0].imageUrl}`}
                     alt={`Product ${val.images[0].imageUrl}`}
-                    className="w-50 h-30 object-cover rounded border"
+                    className="w-64 h-30 object-cover rounded border"
                     width={48}
                     height={48}
                   />
