@@ -14,6 +14,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import { IoAddCircleSharp } from "react-icons/io5";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
+import Link from "next/link";
 
 const BuyerHome = () => {
   const { buyerId } = useParams();
@@ -58,53 +59,79 @@ const BuyerHome = () => {
       {/* <div> {buyerId}</div> */}
 
       {productsList && (
-        <div className="flex  gap-2 flex-wrap text-xs">
+        <div className="flex  gap-2 flex-wrap text-xs relative">
           {productsList.products.map((value, index) => (
             <div
               key={value._id}
-              className="flex flex-col bg-amber-300 w-48 h-80 overflow-scroll"
+              className="flex flex-col bg-amber-300 w-48 h-80 overflow-hidden"
             >
-              <Image
-                className="object-cover h-24 w-64"
-                alt="image"
-                src={`http://localhost:8000${value.images[0].imageUrl}`}
-                width={100}
-                height={100}
-              />
-              <div className="p-2">
+              <Link href={`/buyer/${buyerId}/home/${value._id}/productDetails`}>
+                <Image
+                  className="object-cover h-24 w-64"
+                  alt="image"
+                  src={`http://localhost:8000${value.images[0].imageUrl}`}
+                  width={100}
+                  height={100}
+                />
+              </Link>
+              <div className="p-2 bg-red-400">
                 <div className="font-bold">{value?.title}</div>
+                <div className="flex  justify-between items-center w-full border-b-1">
+                  <div>Rs.{value?.price}</div>
+                  <div>{value?.stock} units</div>
+                </div>
                 <div>{value?.description}</div>
-                <div>{value?.price}</div>
-                <div>{value?.category}</div>
-                <div>{value?.seller}</div>
+
+                {/* <div>{value?.category}</div>
+
+                <div>{value?.seller}</div> */}
               </div>
 
-              <div className="flex gap-2 snap-x-auto snap-mandatory overflow-x-auto scroll-smooth">
+              <div className="flex gap-2  hover:overflow-x-auto ">
                 {value?.images.map((v, i) => (
-                  <div key={v._id} className="snap-start flex-shrink-0">
+                  <div
+                    key={v._id}
+                    className="snap-start flex-shrink-0 relative"
+                  >
                     <Image
                       className="object-cover rounded-md"
                       src={`http://localhost:8000${v?.imageUrl}`}
-                      alt={`productImage${i}`}
+                      alt={`${value?.title}${i}`}
+                      title={`${value?.title}${i}`}
                       width={100}
                       height={100}
                     />
                   </div>
                 ))}
               </div>
-              <div className="flex gap-2 text-xl">
-                <button onClick={() => dispatch(addToCart)}>
-                  <FaCartShopping />
-                </button>
-                <button onClick={() => dispatch(increaseQuantity)}>
-                  <IoAddCircleSharp />
-                </button>
-                <button onClick={() => dispatch(decreaseQuantity)}>
-                  <AiFillMinusCircle />
-                </button>{" "}
-                <button onClick={() => dispatch(removeFromCart)}>
-                  <GrPowerReset />
-                </button>
+              <div className="">
+                <div className="flex gap-2 text-xl absolute bottom-0 ">
+                  <button
+                    className="flex gap-2 hover:cursor-pointer bg bg-green-400 px-2 rounded-sm text-emerald-100"
+                    onClick={() => dispatch(addToCart)}
+                  >
+                    <FaCartShopping />{" "}
+                    <span className="text-xs">Add to cart</span>
+                  </button>
+                  <button
+                    className="text-green-400"
+                    onClick={() => dispatch(increaseQuantity)}
+                  >
+                    <IoAddCircleSharp />
+                  </button>
+                  <button
+                    className="text-red-400"
+                    onClick={() => dispatch(decreaseQuantity)}
+                  >
+                    <AiFillMinusCircle />
+                  </button>{" "}
+                  <button
+                    className="text-black"
+                    onClick={() => dispatch(removeFromCart)}
+                  >
+                    <GrPowerReset />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
