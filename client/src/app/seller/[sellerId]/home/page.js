@@ -5,6 +5,7 @@ import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SellerHome() {
   const { sellerId } = useParams();
@@ -99,45 +100,47 @@ export default function SellerHome() {
     router.push("/login");
   };
   return (
-    <div className="bg-amber-50 text-black  p-6 flex flex-col gap-2 w-full">
+    <div className="bg-amber-200 text-black  p-6 flex flex-col gap-2 w-full">
       <AddProducts sellerId={sellerId} />
       <h1 className="text-2xl font-bold mt-4 mb-2">My Product List</h1>
 
-      <div className="flex  gap-2 content-center items-center flex-wrap">
+      <div className="flex gap-2 content-center items-center flex-wrap">
         {products.length > 0 ? (
-          <div className="flex flex-wrap gap-4 w-full">
+          <div className="flex flex-wrap gap-1">
             {products.map((val) => (
               <div
                 key={val._id}
-                className="p-4 bg-orange-100 rounded-md shadow hover:shadow-md transition"
+                className=" bg-orange-100 rounded-md shadow hover:shadow-md transition  w-64 h-80 border-0 overflow-scroll text-xs"
               >
                 <div className="flex flex-col gap-2">
-                  <div className="flex flex-col gap-2">
-                    <input value={val.title} disabled className="border p-1" />
-                    <input
-                      value={val.description}
-                      disabled
-                      className="border p-1"
-                    />
-                    <input value={val.price} disabled className="border p-1" />
-                    <input
-                      value={val.category}
-                      disabled
-                      className="border p-1"
-                    />
-                    <input value={val.stock} disabled className="border p-1" />
+                  <Image
+                    src={`http://localhost:8000${val.images[0].imageUrl}`}
+                    alt={`Product ${val.images[0].imageUrl}`}
+                    className="w-64 h-30 object-cover rounded border"
+                    width={48}
+                    height={48}
+                  />
+
+                  <div className="flex flex-col p-1">
+                    <input value={val.title} disabled className="p-1 " />
+                    <input value={val.description} disabled className=" p-1" />
+                    <input value={val.price} disabled className=" p-1" />
+                    <input value={val.category} disabled className=" p-1" />
+                    <input value={val.stock} disabled className=" p-1" />
                   </div>
                   <div>
                     {/* ✅ Display product images */}
-                    {JSON.stringify(val.images)}
+                    <div className="text-wrap break-all">
+                      {/* {JSON.stringify(val.images)} */}
+                    </div>
                     {val.images && val.images.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
+                      <div className="flex flex-wrap gap-1 mt-2 overflow-scroll w-64">
                         {val.images.map((img, i) => (
                           <Image
                             key={i}
                             src={`http://localhost:8000${img?.imageUrl}`}
                             alt={`Product ${img?.imageUrl}`}
-                            className="w-24 h-24 object-cover rounded border"
+                            className="w-16 h-24 object-cover rounded border"
                             width={100}
                             height={100}
                           />
