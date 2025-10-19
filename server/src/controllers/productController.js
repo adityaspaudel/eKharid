@@ -4,6 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
+
+
 // Ensure uploads folder exists
 const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -117,10 +119,28 @@ const getAllProducts = async (req, res) => {
     });
   }
 };
+
+const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404).json({ message: "product not found" });
+    } else {
+      res
+        .status(200)
+        .json({ message: "product fetched successfully", product });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error or invalid ID format" });
+  }
+};
 module.exports = {
   upload,
   addProducts,
   getProducts,
   updateProduct,
   getAllProducts,
+  getProductById,
 };
