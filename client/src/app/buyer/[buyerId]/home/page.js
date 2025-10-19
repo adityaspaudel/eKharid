@@ -10,32 +10,38 @@ import {
   removeFromCart,
 } from "@/lib/redux/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { FaCartShopping } from "react-icons/fa6";
+import { ShoppingCart } from "lucide-react"; // Using lucide for consistency/modern look
 import { IoAddCircleSharp } from "react-icons/io5";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import Link from "next/link";
+import { Info } from "lucide-react"; // Added Info icon for errors
+
+// Define the base URL once
+const IMAGE_BASE_URL = "http://localhost:8000";
 
 const BuyerHome = () => {
   const { buyerId } = useParams();
   const [productsList, setProductsList] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); // Added error state
 
   // redux
-  const items = useSelector((state) => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
 
   const getAllProducts = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/product/getAllProducts"
-      );
+      const response = await fetch(`${IMAGE_BASE_URL}/product/getAllProducts`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
-      console.log("All products fetched:", data);
-
       setProductsList(data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -46,109 +52,179 @@ const BuyerHome = () => {
   }, []);
 
   useEffect(() => {
-    console.log(buyerId);
     getAllProducts();
-  }, [buyerId, getAllProducts]);
+  }, [getAllProducts]);
 
   const router = useRouter();
   const handleLogout = () => {
     router.push("/login");
   };
-  return (
-    <div className="bg-white min-h-screen w-screen text-black">
-      {/* <div> {buyerId}</div> */}
 
-      {productsList && (
-        <div className="flex  gap-2 flex-wrap text-xs relative">
-          {productsList.products.map((value, index) => (
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-2xl font-semibold text-gray-600">
+        Loading products...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="p-6 text-red-600 bg-red-100 border border-red-400 rounded-lg max-w-xl">
+          <p className="flex items-center gap-2 font-medium">
+            <Info className="w-5 h-5" /> Error: {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const products = productsList?.products || [];
+
+  return (
+    <div className="bg-gray-50 min-h-screen p-4 md:p-8">
+      {/* Header and Logout Button */}
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome Buyer</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 shadow-md transition hover:shadow-lg text-white hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {products.map((product, index) => {
+          // Find the current quantity in the cart
+          const cartItem = cartItems.find((item) => item._id === product._id);
+          const currentQuantity = cartItem ? cartItem.quantity : 0;
+          const isAvailable = product.stock > 0;
+
+          return (
             <div
-              key={value._id}
-              className="flex flex-col bg-amber-300 w-48 h-80 overflow-hidden"
+              key={product._id}
+              className="flex flex-col bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 border border-gray-100"
             >
-              <Link href={`/buyer/${buyerId}/home/${value._id}/productDetails`}>
+              {/* Image Link */}
+              <Link
+                href={`/buyer/${buyerId}/home/${product._id}/productDetails`}
+                className="block relative h-40"
+              >
                 <Image
-                  className="object-cover h-24 w-64"
-                  alt="image"
-                  src={`http://localhost:8000${value.images[0].imageUrl}`}
-                  width={100}
-                  height={100}
+                  className="object-cover"
+                  alt={product?.title || "Product Image"}
+                  src={`${IMAGE_BASE_URL}${product.images[0]?.imageUrl}`}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 200px"
+                  // Only set priority for the first few items to optimize LCP
+                  priority={index < 3}
                 />
               </Link>
-              <div className="p-2 bg-red-400">
-                <div className="font-bold">{value?.title}</div>
-                <div className="flex  justify-between items-center w-full border-b-1">
-                  <div>Rs.{value?.price}</div>
-                  <div>{value?.stock} units</div>
+
+              {/* Product Info */}
+              <div className="p-4 flex flex-col justify-between flex-grow">
+                <div className="mb-2">
+                  <h3
+                    className="font-bold text-lg text-gray-900 truncate"
+                    title={product?.title}
+                  >
+                    {product?.title}
+                  </h3>
+                  <p className="text-sm text-indigo-600 font-semibold mt-1">
+                    {product?.category}
+                  </p>
+                  <p className="text-gray-500 text-xs mt-1 line-clamp-2">
+                    {product?.description}
+                  </p>
                 </div>
-                <div>{value?.description}</div>
 
-                {/* <div>{value?.category}</div>
-
-                <div>{value?.seller}</div> */}
-              </div>
-
-              <div className="flex gap-2  hover:overflow-x-auto ">
-                {value?.images.map((v, i) => (
+                {/* Price and Stock */}
+                <div className="flex justify-between items-center w-full mt-2 pt-2 border-t border-gray-100">
+                  <div className="font-extrabold text-lg text-green-600">
+                    Rs.{product?.price?.toLocaleString() || "N/A"}
+                  </div>
                   <div
-                    key={v._id}
-                    className="snap-start flex-shrink-0 relative"
+                    className={`text-sm font-medium ${
+                      isAvailable ? "text-green-500" : "text-red-500"
+                    }`}
                   >
-                    <Image
-                      className="object-cover rounded-md"
-                      src={`http://localhost:8000${v?.imageUrl}`}
-                      alt={`${value?.title}${i}`}
-                      title={`${value?.title}${i}`}
-                      width={100}
-                      height={100}
-                    />
+                    {isAvailable ? `${product.stock} in stock` : "Out of Stock"}
                   </div>
-                ))}
-              </div>
-              <div className="">
-                <div className="flex gap-4 items-center text-xl absolute bottom-0 ">
-                  <button
-                    className="flex gap-2 hover:cursor-pointer bg bg-green-400 px-2 rounded-sm text-emerald-100"
-                    onClick={() => dispatch(addToCart)}
-                  >
-                    <FaCartShopping />{" "}
-                    <span className="text-xs">Add to cart</span>
-                  </button>
-                  <div className="flex gap-1">
+                </div>
+
+                {/* Cart Action Buttons */}
+                <div className="mt-4 flex flex-col gap-2">
+                  {currentQuantity === 0 ? (
+                    // Add to Cart Button
                     <button
-                      className="text-green-400 hover:cursor-pointer"
-                      onClick={() => dispatch(increaseQuantity)}
+                      className={`w-full py-2 flex items-center justify-center font-bold text-white rounded-lg transition-all ${
+                        isAvailable
+                          ? "bg-indigo-600 hover:bg-indigo-700 shadow-md"
+                          : "bg-gray-400 cursor-not-allowed"
+                      }`}
+                      onClick={() =>
+                        isAvailable && dispatch(addToCart(product))
+                      }
+                      disabled={!isAvailable}
                     >
-                      <IoAddCircleSharp />
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Add to Cart
                     </button>
-                    <button
-                      className="text-red-400 hover:cursor-pointer"
-                      onClick={() => dispatch(decreaseQuantity)}
-                    >
-                      <AiFillMinusCircle />
-                    </button>{" "}
-                    <button
-                      className="text-black hover:cursor-pointer"
-                      onClick={() => dispatch(removeFromCart)}
-                    >
-                      <GrPowerReset />
-                    </button>
-                  </div>
+                  ) : (
+                    // Quantity Control and Reset
+                    <div className="flex flex-col gap-2">
+                      {/* Quantity Control Row */}
+                      <div className="flex items-center justify-between text-xl w-full p-1 border border-indigo-200 rounded-lg">
+                        <button
+                          className="text-indigo-600 hover:text-indigo-700 transition"
+                          onClick={() =>
+                            dispatch(decreaseQuantity(product._id))
+                          }
+                          disabled={!isAvailable || currentQuantity <= 0}
+                        >
+                          <AiFillMinusCircle />
+                        </button>
+                        <span className="text-base font-semibold text-gray-800">
+                          {currentQuantity} in Cart
+                        </span>
+                        <button
+                          className="text-indigo-600 hover:text-indigo-700 transition"
+                          onClick={() =>
+                            isAvailable && dispatch(increaseQuantity(product))
+                          }
+                          disabled={
+                            !isAvailable || currentQuantity >= product.stock
+                          }
+                        >
+                          <IoAddCircleSharp />
+                        </button>
+                      </div>
+
+                      {/* Remove Button */}
+                      <button
+                        className="w-full py-2 flex items-center justify-center font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
+                        onClick={() => dispatch(removeFromCart(product._id))}
+                      >
+                        <GrPowerReset className="w-3 h-3 mr-2" />
+                        Remove All
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          ))}
+          );
+        })}
+      </div>
+
+      {products.length === 0 && !isLoading && (
+        <div className="text-center p-10 text-xl font-medium text-gray-500">
+          No products found.
         </div>
       )}
-      <div className="bg-white text-black">
-        {/* {JSON.stringify(productsList)} */}
-
-        <button
-          onClick={handleLogout}
-          className="bg-red-400 shadow transition hover:shadow-md text-white hover:bg-red-500 px-2 rounded-sm"
-        >
-          logout
-        </button>
-      </div>
     </div>
   );
 };
