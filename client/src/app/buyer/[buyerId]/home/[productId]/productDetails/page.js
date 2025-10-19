@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { memo, useCallback, useEffect, useState } from "react";
 
@@ -35,12 +36,34 @@ const ProductDetails = () => {
 
   return (
     <main>
-      <h1>Product Details</h1>
       {loading ? (
         <div>loading...</div>
       ) : (
         <div>
-          {specificProduct && <div>{JSON.stringify(specificProduct)}</div>}
+          {specificProduct && (
+            <div>
+              <div>
+                <h1>{specificProduct?.product?.title}</h1>
+                <div>{specificProduct?.product?.description}</div>{" "}
+                <div>Rs.{specificProduct?.product?.price}</div>{" "}
+                <div>{specificProduct?.product?.category}</div>{" "}
+                <div>{specificProduct?.product?.stock}</div>
+                <div className="flex gap-2">
+                  {specificProduct?.product?.images.map((img, ind) => (
+                    <div key={ind} className="flex">
+                      <Image
+                        src={`http://localhost:8000${img?.imageUrl}`}
+                        alt="images"
+                        height={100}
+                        width={100}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <pre>{JSON.stringify(specificProduct, 2, 2)}</pre>
+            </div>
+          )}
         </div>
       )}
     </main>
