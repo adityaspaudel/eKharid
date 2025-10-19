@@ -5,7 +5,6 @@ const path = require("path");
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
 
-
 // Ensure uploads folder exists
 const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {

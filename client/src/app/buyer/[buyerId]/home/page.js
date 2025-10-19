@@ -10,37 +10,32 @@ import {
   removeFromCart,
 } from "@/lib/redux/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ShoppingCart } from "lucide-react"; // Using lucide for consistency/modern look
+import { ShoppingCart, Info } from "lucide-react";
 import { IoAddCircleSharp } from "react-icons/io5";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import Link from "next/link";
-import { Info } from "lucide-react"; // Added Info icon for errors
 
-// Define the base URL once
 const IMAGE_BASE_URL = "http://localhost:8000";
 
 const BuyerHome = () => {
   const { buyerId } = useParams();
   const [productsList, setProductsList] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null); // Added error state
+  const [error, setError] = useState(null);
 
-  // redux
-  const cartItems = useSelector((state) => state.cart.items);
+  const router = useRouter();
+
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
 
   const getAllProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await fetch(`${IMAGE_BASE_URL}/product/getAllProducts`);
-
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
       setProductsList(data);
     } catch (err) {
@@ -55,20 +50,16 @@ const BuyerHome = () => {
     getAllProducts();
   }, [getAllProducts]);
 
-  const router = useRouter();
-  const handleLogout = () => {
-    router.push("/login");
-  };
+  const handleLogout = () => router.push("/login");
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen text-2xl font-semibold text-gray-600">
         Loading products...
       </div>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="p-6 text-red-600 bg-red-100 border border-red-400 rounded-lg max-w-xl">
@@ -78,15 +69,14 @@ const BuyerHome = () => {
         </div>
       </div>
     );
-  }
 
   const products = productsList?.products || [];
 
   return (
     <div className="bg-gray-50 min-h-screen p-4 md:p-8">
-      {/* Header and Logout Button */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-6 border-b pb-4">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome Buyer</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Welcome to eKharid</h1>
         <button
           onClick={handleLogout}
           className="bg-red-600 shadow-md transition hover:shadow-lg text-white hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
@@ -95,10 +85,9 @@ const BuyerHome = () => {
         </button>
       </div>
 
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      {/* Product List */}
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-8">
         {products.map((product, index) => {
-          // Find the current quantity in the cart
           const cartItem = cartItems.find((item) => item._id === product._id);
           const currentQuantity = cartItem ? cartItem.quantity : 0;
           const isAvailable = product.stock > 0;
@@ -106,9 +95,9 @@ const BuyerHome = () => {
           return (
             <div
               key={product._id}
-              className="flex flex-col bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 border border-gray-100"
+              className="flex flex-col bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 border border-gray-100 w-full sm:w-[48%] md:w-[30%] lg:w-[22%] xl:w-[18%]"
             >
-              {/* Image Link */}
+              {/* Image */}
               <Link
                 href={`/buyer/${buyerId}/home/${product._id}/productDetails`}
                 className="block relative h-40"
@@ -119,12 +108,11 @@ const BuyerHome = () => {
                   src={`${IMAGE_BASE_URL}${product.images[0]?.imageUrl}`}
                   fill
                   sizes="(max-width: 640px) 100vw, 200px"
-                  // Only set priority for the first few items to optimize LCP
                   priority={index < 3}
                 />
               </Link>
 
-              {/* Product Info */}
+              {/* Info */}
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div className="mb-2">
                   <h3
@@ -141,7 +129,7 @@ const BuyerHome = () => {
                   </p>
                 </div>
 
-                {/* Price and Stock */}
+                {/* Price + Stock */}
                 <div className="flex justify-between items-center w-full mt-2 pt-2 border-t border-gray-100">
                   <div className="font-extrabold text-lg text-green-600">
                     Rs.{product?.price?.toLocaleString() || "N/A"}
@@ -155,35 +143,35 @@ const BuyerHome = () => {
                   </div>
                 </div>
 
-                {/* Cart Action Buttons */}
+                {/* Cart Controls */}
                 <div className="mt-4 flex flex-col gap-2">
                   {currentQuantity === 0 ? (
-                    // Add to Cart Button
                     <button
                       className={`w-full py-2 flex items-center justify-center font-bold text-white rounded-lg transition-all ${
                         isAvailable
                           ? "bg-indigo-600 hover:bg-indigo-700 shadow-md"
                           : "bg-gray-400 cursor-not-allowed"
                       }`}
-                      onClick={() =>
-                        isAvailable && dispatch(addToCart(product))
-                      }
+                      onClick={() => dispatch(addToCart(product))}
                       disabled={!isAvailable}
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       Add to Cart
                     </button>
                   ) : (
-                    // Quantity Control and Reset
                     <div className="flex flex-col gap-2">
-                      {/* Quantity Control Row */}
+                      {/* Quantity Control */}
                       <div className="flex items-center justify-between text-xl w-full p-1 border border-indigo-200 rounded-lg">
                         <button
-                          className="text-indigo-600 hover:text-indigo-700 transition"
+                          className={`transition ${
+                            currentQuantity > 0
+                              ? "text-indigo-600 hover:text-indigo-700"
+                              : "text-gray-400 cursor-not-allowed"
+                          }`}
                           onClick={() =>
                             dispatch(decreaseQuantity(product._id))
                           }
-                          disabled={!isAvailable || currentQuantity <= 0}
+                          disabled={currentQuantity <= 0}
                         >
                           <AiFillMinusCircle />
                         </button>
@@ -191,19 +179,20 @@ const BuyerHome = () => {
                           {currentQuantity} in Cart
                         </span>
                         <button
-                          className="text-indigo-600 hover:text-indigo-700 transition"
+                          className={`transition ${
+                            currentQuantity < product.stock
+                              ? "text-indigo-600 hover:text-indigo-700"
+                              : "text-gray-400 cursor-not-allowed"
+                          }`}
                           onClick={() =>
-                            isAvailable && dispatch(increaseQuantity(product))
+                            dispatch(increaseQuantity(product._id))
                           }
-                          disabled={
-                            !isAvailable || currentQuantity >= product.stock
-                          }
+                          disabled={currentQuantity >= product.stock}
                         >
                           <IoAddCircleSharp />
                         </button>
                       </div>
 
-                      {/* Remove Button */}
                       <button
                         className="w-full py-2 flex items-center justify-center font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
                         onClick={() => dispatch(removeFromCart(product._id))}
