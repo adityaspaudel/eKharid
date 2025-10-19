@@ -84,7 +84,7 @@ export default function SignupPage() {
                 <Field
                   type="text"
                   name="fullName"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your full name"
                 />
                 <ErrorMessage
@@ -102,7 +102,7 @@ export default function SignupPage() {
                 <Field
                   type="text"
                   name="username"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your username"
                 />
                 <ErrorMessage
@@ -120,7 +120,7 @@ export default function SignupPage() {
                 <Field
                   type="email"
                   name="email"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -138,7 +138,7 @@ export default function SignupPage() {
                 <Field
                   type="password"
                   name="password"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter password"
                 />
                 <ErrorMessage
@@ -156,7 +156,7 @@ export default function SignupPage() {
                 <Field
                   type="password"
                   name="confirmPassword"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Re-enter password"
                 />
                 <ErrorMessage
@@ -167,8 +167,12 @@ export default function SignupPage() {
               </div>
               {/* Role */}
               <div className="flex flex-col">
-                <Field as="select" name="role" className="font-bold w-40 ">
-                  <option value="">select a role</option>
+                <Field
+                  as="select"
+                  name="role"
+                  className="font-bold w-40 "
+                >
+                  <option value="" className="">select a role</option>
                   <option value="buyer" default>
                     buyer
                   </option>
@@ -179,7 +183,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 shadow-md text-white font-semibold py-2 rounded-lg transition"
               >
                 {isSubmitting ? "Creating Account..." : "Sign Up"}
               </button>
@@ -188,7 +192,10 @@ export default function SignupPage() {
         </Formik>
         <div className="text-sm">
           already have an account?{" "}
-          <Link href="/login" className="underline hover:text-blue-500">
+          <Link
+            href="/login"
+            className="underline  hover:text-indigo-700 shadow-md"
+          >
             Login here
           </Link>
         </div>

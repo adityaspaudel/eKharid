@@ -80,17 +80,44 @@ const getProducts = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
+
+    // 🧾 Text fields
     const { title, description, price, stock, category } = req.body;
 
+    // 🖼️ New uploaded images
+    let newImages = [];
+    if (req.files && req.files.length > 0) {
+      newImages = req.files.map((file) => ({
+        imageUrl: `/uploads/${file.filename}`,
+      }));
+    }
+
+    // ✅ Find existing product
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // ✅ Merge existing images with new uploads
+    const updatedImages = [...product.images, ...newImages];
+
+    // ✅ Build update object
+    const updateData = {
+      title,
+      description,
+      price,
+      stock,
+      category,
+      images: updatedImages,
+    };
+
+    // ✅ Update product
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { title, description, price, stock, category },
-      { new: true, runValidators: true } // ✅ returns updated document
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
     );
-
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
 
     res.status(200).json({
       message: "Product updated successfully",
@@ -98,9 +125,10 @@ const updateProduct = async (req, res) => {
     });
   } catch (error) {
     console.error("Failed to update product:", error);
-    res.status(500).json({ message: "Failed to update product" });
+    res.status(500).json({ message: "Server error while updating product" });
   }
 };
+
 const getAllProducts = async (req, res) => {
   try {
     const allProducts = await Product.find({});

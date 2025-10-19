@@ -101,6 +101,8 @@ const ProductDetails = () => {
 
           {/* Thumbnail Gallery */}
           <div className="flex gap-3 overflow-x-auto pb-2">
+            <button>logout</button>
+
             {product.images.map((img, ind) => {
               const fullImageUrl = `${imageBaseUrl}${img?.imageUrl}`;
               return (

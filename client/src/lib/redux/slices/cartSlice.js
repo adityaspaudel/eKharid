@@ -26,7 +26,7 @@ const cartSlice = createSlice({
         state.items[idx].quantity += 1;
       } else {
         // store a minimal item copy to prevent accidentally storing huge objects,
-        // but preserve useful fields (you can add/remove fields as needed)
+
         state.items.push({
           _id: id,
           title: payload.title ?? "",

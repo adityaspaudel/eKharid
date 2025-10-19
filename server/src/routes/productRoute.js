@@ -17,7 +17,11 @@ router.post(
 );
 
 router.get("/seller/:sellerId/getProducts", getProducts);
-router.put("/product/:productId/updateProduct", updateProduct);
+router.put(
+  "/product/:productId/updateProduct",
+  upload.array("images", 5),
+  updateProduct
+);
 router.get("/product/getAllProducts", getAllProducts);
 router.get("/product/:productId/getProductById", getProductById);
 
