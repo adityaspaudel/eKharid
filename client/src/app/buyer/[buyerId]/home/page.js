@@ -105,7 +105,7 @@ const BuyerHome = () => {
                 ))}
               </div>
               <div className="">
-                <div className="flex gap-2 text-xl absolute bottom-0 ">
+                <div className="flex gap-4 items-center text-xl absolute bottom-0 ">
                   <button
                     className="flex gap-2 hover:cursor-pointer bg bg-green-400 px-2 rounded-sm text-emerald-100"
                     onClick={() => dispatch(addToCart)}
@@ -113,24 +113,26 @@ const BuyerHome = () => {
                     <FaCartShopping />{" "}
                     <span className="text-xs">Add to cart</span>
                   </button>
-                  <button
-                    className="text-green-400"
-                    onClick={() => dispatch(increaseQuantity)}
-                  >
-                    <IoAddCircleSharp />
-                  </button>
-                  <button
-                    className="text-red-400"
-                    onClick={() => dispatch(decreaseQuantity)}
-                  >
-                    <AiFillMinusCircle />
-                  </button>{" "}
-                  <button
-                    className="text-black"
-                    onClick={() => dispatch(removeFromCart)}
-                  >
-                    <GrPowerReset />
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      className="text-green-400 hover:cursor-pointer"
+                      onClick={() => dispatch(increaseQuantity)}
+                    >
+                      <IoAddCircleSharp />
+                    </button>
+                    <button
+                      className="text-red-400 hover:cursor-pointer"
+                      onClick={() => dispatch(decreaseQuantity)}
+                    >
+                      <AiFillMinusCircle />
+                    </button>{" "}
+                    <button
+                      className="text-black hover:cursor-pointer"
+                      onClick={() => dispatch(removeFromCart)}
+                    >
+                      <GrPowerReset />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
