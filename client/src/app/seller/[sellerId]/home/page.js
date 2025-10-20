@@ -157,32 +157,34 @@ export default function SellerHome() {
               </div>
 
               {/* Product Details */}
-              {["title", "description", "price", "category", "stock"].map(
-                (field) => (
-                  <input
-                    key={field}
-                    value={product[field]}
-                    disabled
-                    className="p-1 w-full mb-1"
-                  />
-                )
-              )}
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-0 text-sm mb-2">
+                {["title", "description", "price", "category", "stock"].map(
+                  (field) => (
+                    <input
+                      key={field}
+                      value={product[field]}
+                      disabled
+                      className=" w-full"
+                    />
+                  )
+                )}
+              </div>
+              <div className="flex justify-between items-center ">
                 {/* Edit Button */}
                 <button
                   onClick={(e) => handleEdit(e, product._id)}
                   disabled={
                     editingProductId && editingProductId !== product._id
                   }
-                  className="px-2  rounded cursor-pointer hover:bg-amber-200 "
+                  className="px-2  rounded cursor-pointer hover:bg-amber-200 text-indigo-500"
                 >
-                  {editingProductId === product._id ? "Close" : "📝"}
+                  {editingProductId === product._id ? "Close" : "Edit"}
                 </button>
                 <button
                   onClick={(e) => handleDelete(e, product._id)}
-                  className="text-sm hover:text-md cursor-pointer hover:bg-amber-200 px-2"
+                  className="text-sm hover:text-md cursor-pointer text-red-500 hover:bg-amber-200 px-2"
                 >
-                  🗑️
+                  delete
                 </button>
               </div>
 
@@ -234,7 +236,7 @@ export default function SellerHome() {
                       onClick={(e) =>
                         handleSaveAndUpdateProduct(e, product._id)
                       }
-                      className="bg-green-600 text-white px-3 py-1 rounded"
+                      className="bg-indigo-600 text-white px-3 py-1 rounded"
                     >
                       Update
                     </button>
