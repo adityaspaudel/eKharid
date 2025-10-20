@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { memo, useCallback, useEffect, useState } from "react";
-// Assuming you have a way to get these icons, e.g., using 'lucide-react' or a custom SVG component
-// For this example, we'll import them conceptually.
+
 import { ShoppingCart, Package, Tag, Info } from "lucide-react";
 
 const ProductDetails = () => {
@@ -36,7 +35,7 @@ const ProductDetails = () => {
       const data = await response.json();
       setSpecificProduct(data);
 
-      // Set the first image as the main image once data is loaded
+    
       if (data?.product?.images?.length > 0) {
         setMainImage(`${imageBaseUrl}${data.product.images[0].imageUrl}`);
       }

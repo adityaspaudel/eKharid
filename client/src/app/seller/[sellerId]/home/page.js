@@ -106,11 +106,30 @@ export default function SellerHome() {
     },
     [productChange, selectedImages]
   );
+  const handleDelete = useCallback(
+    async (e, productId) => {
+      e.preventDefault();
+      try {
+        const res = await axios.delete(
+          `http://localhost:8000/product/${productId}/deleteProductById`
+        );
 
+        if (res.status === 200) {
+          setProducts((prev) => prev.filter((p) => p._id !== productId));
+          alert("Product deleted successfully!");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product.");
+      }
+    },
+    [setProducts]
+  );
+  // handle logout
   const handleLogout = () => router.push("/login");
 
   return (
-    <div className="bg-amber-200 text-black p-6 flex flex-col gap-4 w-full">
+    <div className="bg-amber-200 text-black p-6 flex flex-col gap-4 w-full text-sm">
       <AddProducts sellerId={sellerId} />
       <h1 className="text-2xl font-bold">My Product List</h1>
 
@@ -148,15 +167,24 @@ export default function SellerHome() {
                   />
                 )
               )}
-
-              {/* Edit Button */}
-              <button
-                onClick={(e) => handleEdit(e, product._id)}
-                disabled={editingProductId && editingProductId !== product._id}
-                className="bg-blue-500 text-white px-3 py-1 rounded mt-2"
-              >
-                {editingProductId === product._id ? "Close" : "Edit"}
-              </button>
+              <div className="flex justify-between items-center">
+                {/* Edit Button */}
+                <button
+                  onClick={(e) => handleEdit(e, product._id)}
+                  disabled={
+                    editingProductId && editingProductId !== product._id
+                  }
+                  className="px-2  rounded cursor-pointer hover:bg-amber-200 "
+                >
+                  {editingProductId === product._id ? "Close" : "📝"}
+                </button>
+                <button
+                  onClick={(e) => handleDelete(e, product._id)}
+                  className="text-sm hover:text-md cursor-pointer hover:bg-amber-200 px-2"
+                >
+                  🗑️
+                </button>
+              </div>
 
               {/* Edit Form */}
               {editingProductId === product._id && (
