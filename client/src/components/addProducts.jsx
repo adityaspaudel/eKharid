@@ -159,7 +159,7 @@ function AddProducts({ sellerId }) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-green-600 text-white py-2 rounded"
+          className="bg-indigo-600 text-white py-2 rounded"
         >
           {loading ? 'adding...' : 'Add Product'}
         </button>
