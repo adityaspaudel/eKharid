@@ -182,6 +182,34 @@ const deleteProductById = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
+
+// POST /product/searchProducts
+const searchProducts = async (req, res) => {
+  try {
+    const { searchText } = req.body;
+
+    if (!searchText || searchText.trim() === "") {
+      return res.status(400).json({ message: "Search text is required" });
+    }
+
+    const lowerText = searchText.toLowerCase();
+
+    // Simple search without regex
+    const products = await Product.find({
+      $or: [
+        { title: lowerText },
+        { description: lowerText },
+        { category: lowerText },
+      ],
+    }).populate("seller", "name email"); // optional
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error("Error searching products:", error);
+    return res.status(500).json({ message: "Server error", error });
+  }
+};
+
 module.exports = {
   upload,
   addProducts,
@@ -190,4 +218,5 @@ module.exports = {
   getAllProducts,
   getProductById,
   deleteProductById,
+  searchProducts,
 };
