@@ -20,15 +20,16 @@ const IMAGE_BASE_URL = "http://localhost:8000";
 
 const BuyerHome = () => {
   const { buyerId } = useParams();
-  const [productsList, setProductsList] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   const router = useRouter();
-
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
 
+  const [productsList, setProductsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchText, setSearchText] = useState("");
+
+  // Fetch all products
   const getAllProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -37,7 +38,7 @@ const BuyerHome = () => {
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      setProductsList(data);
+      setProductsList(data.products || []);
     } catch (err) {
       console.error("Error fetching products:", err);
       setError("Failed to load products. Please try again.");
@@ -50,6 +51,34 @@ const BuyerHome = () => {
     getAllProducts();
   }, [getAllProducts]);
 
+  // Handle search
+  const handleSearch = useCallback(async () => {
+    if (!searchText.trim()) {
+      // If search is empty, reload all products
+      getAllProducts();
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${IMAGE_BASE_URL}/product/searchProducts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ searchText }),
+      });
+      if (!response.ok) throw new Error("Failed to search product");
+
+      const data = await response.json();
+      setProductsList(data); // update the product list with search results
+    } catch (err) {
+      console.error(err);
+      setError("Failed to search products. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchText, getAllProducts]);
+
+  const handleChange = (e) => setSearchText(e.target.value);
   const handleLogout = () => router.push("/login");
 
   if (isLoading)
@@ -70,13 +99,38 @@ const BuyerHome = () => {
       </div>
     );
 
-  const products = productsList?.products || [];
-
   return (
     <div className="bg-gray-50 min-h-screen p-4 md:p-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6 border-b pb-4">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4 gap-3">
         <h1 className="text-3xl font-bold text-gray-800">Welcome to eKharid</h1>
+
+        <div className="flex gap-2 text-black">
+          <input
+            className="border border-black px-2 py-1 rounded"
+            type="text"
+            name="searchText"
+            value={searchText}
+            onChange={handleChange}
+            placeholder="Search products..."
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
+          >
+            Search
+          </button>
+          <button
+            onClick={() => {
+              setSearchText("");
+              getAllProducts();
+            }}
+            className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded"
+          >
+            Reset
+          </button>
+        </div>
+
         <button
           onClick={handleLogout}
           className="bg-red-600 shadow-md transition hover:shadow-lg text-white hover:bg-red-700 px-4 py-2 rounded-lg font-semibold"
@@ -87,7 +141,13 @@ const BuyerHome = () => {
 
       {/* Product List */}
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-8">
-        {products.map((product, index) => {
+        {productsList.length === 0 && (
+          <div className="text-center p-10 text-xl font-medium text-gray-500">
+            No products found.
+          </div>
+        )}
+
+        {productsList.map((product, index) => {
           const cartItem = cartItems.find((item) => item._id === product._id);
           const currentQuantity = cartItem ? cartItem.quantity : 0;
           const isAvailable = product.stock > 0;
@@ -160,7 +220,6 @@ const BuyerHome = () => {
                     </button>
                   ) : (
                     <div className="flex flex-col gap-2">
-                      {/* Quantity Control */}
                       <div className="flex items-center justify-between text-xl w-full p-1 border border-indigo-200 rounded-lg">
                         <button
                           className={`transition ${
@@ -208,12 +267,6 @@ const BuyerHome = () => {
           );
         })}
       </div>
-
-      {products.length === 0 && !isLoading && (
-        <div className="text-center p-10 text-xl font-medium text-gray-500">
-          No products found.
-        </div>
-      )}
     </div>
   );
 };
