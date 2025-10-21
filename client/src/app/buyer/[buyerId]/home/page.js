@@ -103,7 +103,9 @@ const BuyerHome = () => {
     <div className="bg-gray-50 min-h-screen p-4 md:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4 gap-3">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome to eKharid</h1>
+        <div>
+          <Image src="/eKharidLogo.png" alt="logo" height={100} width={100} />
+        </div>
 
         <div className="flex gap-2 text-black">
           <input

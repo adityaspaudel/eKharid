@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { memo, useCallback, useEffect, useState } from "react";
 
 import { ShoppingCart, Package, Tag, Info } from "lucide-react";
@@ -9,6 +9,7 @@ import { ShoppingCart, Package, Tag, Info } from "lucide-react";
 const ProductDetails = () => {
   // Destructure parameters
   const { buyerId, productId } = useParams();
+  const router = useRouter();
 
   // State variables
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,6 @@ const ProductDetails = () => {
       const data = await response.json();
       setSpecificProduct(data);
 
-    
       if (data?.product?.images?.length > 0) {
         setMainImage(`${imageBaseUrl}${data.product.images[0].imageUrl}`);
       }
@@ -79,9 +79,17 @@ const ProductDetails = () => {
 
   const product = specificProduct.product;
 
+  const goBack = () => {
+    router.back();
+  };
   return (
     <main className="container mx-auto p-4 md:p-8">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden p-6 md:flex md:space-x-8">
+        <div>
+          <button onClick={goBack} title="go back">
+            ⬅️
+          </button>
+        </div>
         {/* 1. Image Gallery Section */}
         <div className="md:w-1/2">
           {/* Main Image Display */}
@@ -126,7 +134,6 @@ const ProductDetails = () => {
             })}
           </div>
         </div>
-
         {/* 2. Product Details Section */}
         <div className="md:w-1/2 mt-6 md:mt-0">
           <p className="text-sm font-semibold uppercase text-indigo-600 mb-2">

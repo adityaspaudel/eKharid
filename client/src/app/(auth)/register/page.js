@@ -32,7 +32,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow hover:shadow-gray-400 p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl transition shadow hover:shadow-gray-600 hover:shadow-md px-8 py-4">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Create an Account
         </h1>
@@ -167,12 +167,10 @@ export default function SignupPage() {
               </div>
               {/* Role */}
               <div className="flex flex-col">
-                <Field
-                  as="select"
-                  name="role"
-                  className="font-bold w-40 "
-                >
-                  <option value="" className="">select a role</option>
+                <Field as="select" name="role" className=" w-40 ">
+                  <option value="" className="">
+                    Select a role
+                  </option>
                   <option value="buyer" default>
                     buyer
                   </option>
