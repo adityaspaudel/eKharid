@@ -13,7 +13,7 @@ Find what you love
 - Node.js & Express.js
 - MongoDB with Mongoose ORM
 - JWT Authentication & bcrypt
-- Nodemailer
+<!-- - Nodemailer -->
 
 **State Management & Forms:**
 - Redux Toolkit
@@ -49,12 +49,12 @@ Find what you love
 ---
 
 ## Phase 3: Product Management 🛍️
-- [ ] Product model (MongoDB)
-- [ ] CRUD operations for products (admin)
-- [ ] Upload product images (multer)
-- [ ] Product listing page
-- [ ] Product detail page
-- [ ] Search & filter products (category, price, rating)
+- [x] Product model (MongoDB)
+- [x] CRUD operations for products (admin)
+- [x] Upload product images (multer)
+- [x] Product listing page
+- [x] Product detail page
+- [x] Search & filter products (category, price, rating)
 
 ---
 
@@ -63,7 +63,7 @@ Find what you love
 - [x] Update quantity / remove items
 - [x] Cart summary page
 - [x] Checkout process
-- [ ] Order creation & saving in database
+- [x] Order creation & saving in database
 - [ ] Payment integration ( esewa )
 
 ---
@@ -87,7 +87,7 @@ Find what you love
 ## Phase 7: Real-Time Features & Extras ⚡
 - [ ] Real-time notifications (Socket.io)
 - [ ] Wishlist / Favorites feature
-- [ ] Admin dashboard with analytics (React Chart.js)
+<!-- - [ ] Admin dashboard with analytics (React Chart.js) -->
 - [ ] Search suggestions / autocomplete
 - [ ] Responsive UI for desktop & mobile
 
