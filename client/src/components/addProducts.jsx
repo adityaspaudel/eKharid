@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { memo, useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
+import { memo, useCallback, useEffect, useState } from "react";
+import axios from "axios";
 
 function AddProducts({ sellerId }) {
-  console.log('sellerId', sellerId);
+  console.log("sellerId", sellerId);
 
   const [product, setProduct] = useState({
-    title: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
-    sellerName: '',
-    sellerEmail: '',
+    title: "",
+    description: "",
+    price: "",
+    category: "",
+    stock: "",
+    sellerName: "",
+    sellerEmail: "",
   });
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // ✅ handleChange — no need for preventDefault in input handlers
   const handleChange = (e) => {
@@ -28,7 +28,14 @@ function AddProducts({ sellerId }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
-    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
+
+    const newImages = [...images, ...files];
+    if (newImages.length > 5) {
+      alert("You can only upload up to 5 images!");
+      return;
+    } else if (newImages.length > 0) {
+      setPreviewImages(files.map((file) => URL.createObjectURL(file)));
+    }
   };
 
   // ✅ Memoized seller details fetch
@@ -38,15 +45,15 @@ function AddProducts({ sellerId }) {
       const { data } = await axios.get(
         `http://localhost:8000/seller/${sellerId}/getSellerDetails`
       );
-      console.log('Seller data:', data);
+      console.log("Seller data:", data);
 
       setProduct((prev) => ({
         ...prev,
-        sellerName: data?.seller.fullName || '',
-        sellerEmail: data?.seller.email || '',
+        sellerName: data?.seller.fullName || "",
+        sellerEmail: data?.seller.email || "",
       }));
     } catch (error) {
-      console.error('Failed to load seller details:', error);
+      console.error("Failed to load seller details:", error);
     }
   }, [sellerId]);
 
@@ -59,28 +66,28 @@ function AddProducts({ sellerId }) {
     async (e) => {
       e.preventDefault();
       setLoading(true);
-      setMessage('');
+      setMessage("");
 
       try {
         const formData = new FormData();
         Object.entries(product).forEach(([key, value]) =>
           formData.append(key, value)
         );
-        images.forEach((file) => formData.append('images', file));
+        images.forEach((file) => formData.append("images", file));
 
         const { data } = await axios.post(
           `http://localhost:8000/seller/${sellerId}/addProducts`,
           formData,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
 
         setMessage(data.message);
         setProduct({
-          title: '',
-          description: '',
-          price: '',
-          category: '',
-          stock: '',
+          title: "",
+          description: "",
+          price: "",
+          category: "",
+          stock: "",
           sellerName: product.sellerName,
           sellerEmail: product.sellerEmail,
         });
@@ -88,7 +95,7 @@ function AddProducts({ sellerId }) {
         setPreviewImages([]);
       } catch (err) {
         console.error(err);
-        setMessage(err.response?.data?.message || 'Upload failed');
+        setMessage(err.response?.data?.message || "Upload failed");
       } finally {
         setLoading(false);
       }
@@ -105,11 +112,11 @@ function AddProducts({ sellerId }) {
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {['title', 'description', 'price', 'category', 'stock'].map((field) => (
+        {["title", "description", "price", "category", "stock"].map((field) => (
           <input
             key={field}
             name={field}
-            type={field === 'price' || field === 'stock' ? 'number' : 'text'}
+            type={field === "price" || field === "stock" ? "number" : "text"}
             placeholder={field[0].toUpperCase() + field.slice(1)}
             value={product[field]}
             onChange={handleChange}
@@ -143,7 +150,7 @@ function AddProducts({ sellerId }) {
           required
         />
 
-        {previewImages.length > 0 && (
+        {previewImages.length > 0 && previewImages.length <= 5 ? (
           <div className="flex gap-2 flex-wrap mt-2">
             {previewImages.map((src, i) => (
               <img
@@ -154,6 +161,8 @@ function AddProducts({ sellerId }) {
               />
             ))}
           </div>
+        ) : (
+          <div></div>
         )}
 
         <button
@@ -161,7 +170,7 @@ function AddProducts({ sellerId }) {
           disabled={loading}
           className="bg-indigo-600 text-white py-2 rounded"
         >
-          {loading ? 'adding...' : 'Add Product'}
+          {loading ? "adding..." : "Add Product"}
         </button>
       </form>
     </main>

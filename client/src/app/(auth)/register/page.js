@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SignupPage() {
   const [submittedData, setSubmittedData] = useState(null);
@@ -33,9 +34,12 @@ export default function SignupPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
       <div className="w-full max-w-md bg-white rounded-2xl transition shadow hover:shadow-gray-600 hover:shadow-md px-8 py-4">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Create an Account
-        </h1>
+        <div>
+          <Image src="/eKharidLogo.png" alt="logo" height={100} width={100} />
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+            Create an Account
+          </h1>
+        </div>
 
         <Formik
           initialValues={{
