@@ -129,18 +129,35 @@ export default function SellerHome() {
   const handleLogout = () => router.push("/login");
 
   return (
-    <div className="bg-amber-200 text-black p-6 flex flex-col gap-4 w-full text-sm">
+    <div className="bg-amber-50 text-black p-6 flex flex-col gap-4 w-full text-sm">
+      <div className="flex justify-between items-center w-full ">
+        <Image
+          className="cursor-pointer"
+          src="/eKharidLogo.png"
+          alt="eKharidLogo"
+          height={100}
+          width={100}
+        />
+        <button
+          onClick={handleLogout}
+          className="bg-red-400 cursor-pointer not-last:text-white px-4 py-2 rounded mt-6 hover:bg-red-500"
+        >
+          Logout
+        </button>
+      </div>
       <AddProducts sellerId={sellerId} />
-      <h1 className="text-2xl font-bold">My Product List</h1>
+      <h1 className="text-2xl font-bold w-full text-center">
+        My Products List
+      </h1>
 
       {products.length === 0 ? (
         <p className="text-gray-600 mt-4">No products found.</p>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 ">
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-orange-100 rounded-md shadow p-4 w-72"
+              className="bg-orange-100 hover:bg-amber-200 rounded-md shadow p-2 w-72 border-gray-600 hover:shadow-md"
             >
               {/* Product Images */}
               <div className="flex gap-2 overflow-x-auto mb-2">
@@ -253,13 +270,6 @@ export default function SellerHome() {
           ))}
         </div>
       )}
-
-      <button
-        onClick={handleLogout}
-        className="bg-red-400 text-white px-4 py-2 rounded mt-6 hover:bg-red-500"
-      >
-        Logout
-      </button>
     </div>
   );
 }
