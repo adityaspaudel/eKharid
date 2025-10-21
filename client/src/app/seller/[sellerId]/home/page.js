@@ -67,8 +67,13 @@ export default function SellerHome() {
 
   const handleChange = (e) =>
     setProductChange({ ...productChange, [e.target.name]: e.target.value });
-  const handleImageChange = (e) =>
-    setSelectedImages(Array.from(e.target.files));
+  const handleImageChange = (e) => {
+    if (Array.from(e.target.files).length <= 5) {
+      setSelectedImages(Array.from(e.target.files));
+    } else if (Array.from(e.target.files).length > 5) {
+      alert("you cant save more than 5 images");
+    }
+  };
 
   // Save / update product
   const handleSaveAndUpdateProduct = useCallback(
@@ -129,18 +134,35 @@ export default function SellerHome() {
   const handleLogout = () => router.push("/login");
 
   return (
-    <div className="bg-amber-200 text-black p-6 flex flex-col gap-4 w-full text-sm">
+    <div className="bg-amber-50 text-black p-6 flex flex-col gap-4 w-full text-sm">
+      <div className="flex justify-between items-center w-full ">
+        <Image
+          className="cursor-pointer"
+          src="/eKharidLogo.png"
+          alt="eKharidLogo"
+          height={100}
+          width={100}
+        />
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white cursor-pointer not-last:text-white px-4 py-2 rounded mt-6 shadow hover:shadow-red-600 hover:shadow-sm"
+        >
+          Logout
+        </button>
+      </div>
       <AddProducts sellerId={sellerId} />
-      <h1 className="text-2xl font-bold">My Product List</h1>
+      <h1 className="text-2xl font-bold w-full text-center">
+        My Products List
+      </h1>
 
       {products.length === 0 ? (
         <p className="text-gray-600 mt-4">No products found.</p>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2 ">
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-orange-100 rounded-md shadow p-4 w-72"
+              className="bg-orange-100 hover:bg-amber-200 rounded-md shadow p-4 w-78 border-gray-600 hover:shadow-md"
             >
               {/* Product Images */}
               <div className="flex gap-2 overflow-x-auto mb-2">
@@ -190,15 +212,20 @@ export default function SellerHome() {
 
               {/* Edit Form */}
               {editingProductId === product._id && (
-                <div className="bg-gray-200 p-3 rounded mt-3">
+                <div className="bg-gray-200 p-4 rounded mt-3 flex flex-col">
                   {Object.keys(productChange).map((field) => (
-                    <div key={field} className="flex items-center gap-2 mb-2">
-                      <label className="w-24 capitalize">{field}:</label>
+                    <div
+                      key={field}
+                      className="flex text-sm justify-between items-center "
+                    >
+                      <label className="min-w-18 capitalize overflow-hidden">
+                        {field}:
+                      </label>
                       <input
                         name={field}
                         value={productChange[field]}
                         onChange={handleChange}
-                        className="border p-1 flex-1"
+                        className="border-b   px-2 "
                       />
                     </div>
                   ))}
@@ -253,13 +280,6 @@ export default function SellerHome() {
           ))}
         </div>
       )}
-
-      <button
-        onClick={handleLogout}
-        className="bg-red-400 text-white px-4 py-2 rounded mt-6 hover:bg-red-500"
-      >
-        Logout
-      </button>
     </div>
   );
 }

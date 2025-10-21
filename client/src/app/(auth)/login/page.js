@@ -35,12 +35,19 @@ export default function SignInPage() {
       setInputType("password");
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
       <div className="w-full max-w-md bg-white transition shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
         <div className="flex flex-col gap-0">
-          <Image src="/eKharidLogo.png" alt="logo" height={100} width={100} />
-          <h1 className="text-2xl mt-4 font-bold text-center mb-6 text-gray-800">
+          <Image
+            src="/eKharidLogo.png"
+            alt="logo"
+            height={100}
+            width={100}
+            className="cursor-pointer"
+          />
+          <h1 className="text-2xl  font-bold text-center mb-6 text-gray-800">
             Login
           </h1>
         </div>
@@ -141,7 +148,7 @@ export default function SignInPage() {
               >
                 {isSubmitting ? "Signing In..." : "Sign In"}
               </button>
-              <div className="text-sm">
+              <div className="text-sm ">
                 Dont have an account?{" "}
                 <Link
                   href="/register"
