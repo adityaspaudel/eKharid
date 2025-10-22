@@ -84,10 +84,10 @@ Find what you love
 
 ---
 
-## Phase 7: Real-Time Features & Extras ⚡
+<!-- ## Phase 7: Real-Time Features & Extras ⚡
 - [ ] Real-time notifications (Socket.io)
 - [ ] Wishlist / Favorites feature
-<!-- - [ ] Admin dashboard with analytics (React Chart.js) -->
+- [ ] Admin dashboard with analytics (React Chart.js)
 - [ ] Search suggestions / autocomplete
 - [ ] Responsive UI for desktop & mobile
 
@@ -100,4 +100,4 @@ Find what you love
 - [ ] Deploy backend (Heroku / Render / Railway)
 - [ ] Deploy frontend (Vercel / Netlify)
 - [ ] Add SSL, environment variables, and production configs
-
+ -->
