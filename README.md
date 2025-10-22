@@ -1,6 +1,6 @@
 Ecommerce website
 # eKharid
-Find what you love
+Your Cart Our Care
 
 ## 🛠 Tech Stack, Libraries & Tools
 **Frontend:**
