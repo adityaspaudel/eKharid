@@ -116,7 +116,7 @@ const ProductDetails = () => {
 		<main className="container mx-auto p-4 md:p-8">
 			<div className="bg-white shadow-xl rounded-2xl overflow-hidden p-6 md:flex md:space-x-8">
 				<div>
-					<button onClick={goBack} title="go back">
+					<button className="cursor-pointer" onClick={goBack} title="go back">
 						⬅️
 					</button>
 				</div>
@@ -223,14 +223,14 @@ const ProductDetails = () => {
 								disabled={!isAvailable}
 								onClick={() => updateCart("add")}
 							>
-								<ShoppingCart className="w-5 h-5 mr-2" />
+								<ShoppingCart className="w-5 h-5 mr-2 cursor-pointer" />
 								Add to Cart
 							</button>
 						) : (
 							<div className="flex flex-col gap-2">
 								<div className="flex items-center justify-between text-xl w-full p-1 border border-indigo-200 rounded-lg">
 									<button
-										className={`transition ${
+										className={`transition cursor-pointer ${
 											currentQuantity > 0
 												? "text-indigo-600 hover:text-indigo-700"
 												: "text-gray-400 cursor-not-allowed"
@@ -244,7 +244,7 @@ const ProductDetails = () => {
 										{currentQuantity} in Cart
 									</span>
 									<button
-										className={`transition ${
+										className={`transition cursor-pointer ${
 											currentQuantity < product.stock
 												? "text-indigo-600 hover:text-indigo-700"
 												: "text-gray-400 cursor-not-allowed"
@@ -257,7 +257,7 @@ const ProductDetails = () => {
 								</div>
 
 								<button
-									className="w-full py-2 flex items-center justify-center font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
+									className="w-full py-2 flex items-center justify-center font-semibold cursor-pointer text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
 									onClick={() => updateCart("reset")}
 								>
 									<GrPowerReset className="w-3 h-3 mr-2" />
