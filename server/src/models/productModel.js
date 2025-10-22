@@ -19,22 +19,48 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, "Category is required"],
+      trim: true,
     },
     stock: {
       type: Number,
       required: true,
       min: [0, "Stock cannot be negative"],
+      validate: {
+        validator: Number.isInteger,
+        message: "Stock must be an integer",
+      },
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    buyer: [
+    buyer: {
+      type: [
+        {
+          user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            min: [1, "Quantity must be at least 1"],
+          },
+          purchaseDate: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+      default: [],
+    },
+    images: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: [],
+        imageUrl: { type: String, required: true },
+        altText: { type: String, default: "" },
+        isPrimary: { type: Boolean, default: false },
       },
     ],
     status: {
@@ -42,15 +68,23 @@ const productSchema = new mongoose.Schema(
       enum: ["available", "sold", "hidden"],
       default: "available",
     },
-
-    images: [
-      {
-        imageUrl: { type: String, required: true },
-      },
-    ],
   },
   { timestamps: true }
 );
+
+// Indexes
+productSchema.index({ category: 1 });
+productSchema.index({ seller: 1 });
+
+// Auto availability middleware
+productSchema.pre("save", function (next) {
+  if (this.stock > 0 && this.status !== "hidden") {
+    this.status = "available";
+  } else if (this.stock === 0) {
+    this.status = "sold";
+  }
+  next();
+});
 
 const Product = mongoose.model("Product", productSchema);
 module.exports = Product;
