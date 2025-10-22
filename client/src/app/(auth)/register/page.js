@@ -171,7 +171,7 @@ export default function SignupPage() {
               </div>
               {/* Role */}
               <div className="flex flex-col">
-                <Field as="select" name="role" className=" w-40 ">
+                <Field as="select" name="role" className=" px-3 py-2  w-40 ">
                   <option value="" className="">
                     Select a role
                   </option>
