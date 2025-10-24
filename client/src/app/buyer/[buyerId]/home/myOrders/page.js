@@ -1,12 +1,11 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 
 const MyOrders = () => {
 	const { buyerId } = useParams();
-	const router = useRouter();
 	const [orders, setOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState("");
@@ -19,8 +18,15 @@ const MyOrders = () => {
 				`http://localhost:8000/product/${buyerId}/getOrders`
 			);
 			if (!res.ok) throw new Error("Failed to fetch orders");
+
 			const data = await res.json();
-			setOrders(data.orders || []);
+			// Wrap each product as a single-item order to keep the same structure
+			const structuredOrders = (data.orders || []).map((order, idx) => ({
+				...order,
+				items: [order], // put the product inside an items array
+				uniqueKey: `${order._id}-${order.purchaseDate}-${idx}`,
+			}));
+			setOrders(structuredOrders);
 		} catch (error) {
 			console.error("Error fetching orders:", error);
 			setMessage("❌ Failed to load orders.");
@@ -33,7 +39,6 @@ const MyOrders = () => {
 		fetchOrders();
 	}, [fetchOrders]);
 
-	// Loading state
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center h-64 text-gray-500">
@@ -42,7 +47,6 @@ const MyOrders = () => {
 		);
 	}
 
-	// Empty state
 	if (!orders.length) {
 		return (
 			<div className="flex justify-center items-center h-64 text-gray-500">
@@ -66,7 +70,7 @@ const MyOrders = () => {
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{orders.map((order) => (
 					<div
-						key={order._id}
+						key={order.uniqueKey} // ✅ unique key for each order
 						className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow"
 					>
 						{/* Order Header */}
@@ -82,9 +86,9 @@ const MyOrders = () => {
 
 						{/* Order Items */}
 						<div className="p-4 space-y-3">
-							{order.items?.map((item, idx) => (
+							{order.items.map((item, idx) => (
 								<div
-									key={`${order._id}-${item._id}-${idx}`}
+									key={`${order.uniqueKey}-${idx}`} // ✅ unique key per item
 									className="flex items-center gap-4 border-b pb-2"
 								>
 									<div className="w-16 h-16 relative flex-shrink-0">
@@ -114,7 +118,7 @@ const MyOrders = () => {
 						{/* Total Amount */}
 						<div className="p-4 border-t text-right font-semibold text-gray-800">
 							Total: Rs.
-							{order.items?.reduce(
+							{order.items.reduce(
 								(sum, item) => sum + item.price * item.quantity,
 								0
 							)}
