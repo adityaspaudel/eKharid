@@ -12,6 +12,9 @@ const {
 	increaseQuantity,
 	decreaseQuantity,
 	resetQuantity,
+	getCartItems,
+	placeOrder,
+	getOrders,
 } = require("../controllers/productController");
 const router = express.Router();
 
@@ -36,4 +39,8 @@ router.post("/product/searchProducts", searchProducts);
 router.put("/product/:buyerId/increaseQuantity", increaseQuantity);
 router.put("/product/:buyerId/decreaseQuantity", decreaseQuantity);
 router.put("/product/:buyerId/resetQuantity", resetQuantity);
+router.get("/product/:buyerId/fetchCartItems", getCartItems);
+
+router.post("/product/:buyerId/placeOrder", placeOrder);
+router.get("/product/:buyerId/getOrders", getOrders);
 module.exports = router;
