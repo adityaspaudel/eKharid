@@ -177,16 +177,22 @@ const BuyerHome = () => {
 					/>
 					<button
 						onClick={handleSearch}
-						className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
+						className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded cursor-pointer"
 					>
 						Search
 					</button>
+					<Link
+						className="bg-blue-600 hover:bg-blue-700 w-8 rounded-sm flex justify-center items-center"
+						href={`/buyer/${buyerId}/home/myCart`}
+					>
+						<button className="cursor-pointer text-center">🛒</button>
+					</Link>
 					<button
 						onClick={() => {
 							setSearchText("");
 							getAllProducts();
 						}}
-						className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded"
+						className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded cursor-pointer"
 					>
 						Reset
 					</button>

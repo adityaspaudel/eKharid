@@ -366,6 +366,156 @@ const resetQuantity = async (req, res) => {
 	}
 };
 
+const getCartItems = async (req, res) => {
+	try {
+		const { buyerId } = req.params;
+
+		// 1️⃣ Validate buyerId
+		if (!buyerId) {
+			return res.status(400).json({ message: "Buyer ID is required" });
+		}
+
+		// 2️⃣ Fetch products where this buyer exists in the buyer array
+		const cartItems = await Product.find({ "buyer.user": buyerId })
+			.select("title price images buyer") // pick only needed fields
+			.lean();
+
+		// 3️⃣ If no items found
+		if (!cartItems || cartItems.length === 0) {
+			return res.status(404).json({ message: "No cart items found" });
+		}
+
+		// 4️⃣ Filter to include only this buyer’s details
+		const filteredCart = cartItems.map((product) => {
+			const buyerInfo = product.buyer.find(
+				(b) => b.user.toString() === buyerId
+			);
+			return {
+				_id: product._id,
+				title: product.title,
+				price: product.price,
+				images: product.images,
+				quantity: buyerInfo?.quantity || 0,
+				purchaseDate: buyerInfo?.purchaseDate || null,
+			};
+		});
+
+		// 5️⃣ Send response
+		res.status(200).json({
+			success: true,
+			count: filteredCart.length,
+			cartItems: filteredCart,
+		});
+	} catch (error) {
+		console.error("❌ Failed to fetch cart items:", error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to fetch cart items",
+			error: error.message,
+		});
+	}
+};
+
+const placeOrder = async (req, res) => {
+	try {
+		const { buyerId } = req.params;
+		const { items } = req.body;
+
+		// Validate input
+		if (!buyerId || !items || !Array.isArray(items) || items.length === 0) {
+			return res
+				.status(400)
+				.json({ message: "Invalid request. Missing buyer or items." });
+		}
+
+		// Loop through items
+		const results = [];
+		for (const item of items) {
+			const { productId, quantity } = item;
+
+			const product = await Product.findById(productId);
+			if (!product) continue; // skip invalid products
+
+			// Check stock availability
+			if (product.stock < quantity) {
+				return res.status(400).json({
+					message: `Not enough stock for product: ${product.title}`,
+				});
+			}
+
+			// Push buyer info
+			product.buyer.push({
+				user: buyerId,
+				quantity,
+				purchaseDate: new Date(),
+			});
+
+			// Decrease stock
+			product.stock -= quantity;
+
+			await product.save();
+
+			results.push({
+				productId: product._id,
+				title: product.title,
+				quantity,
+				remainingStock: product.stock,
+			});
+		}
+
+		res.status(200).json({
+			success: true,
+			message: "Order placed successfully",
+			results,
+		});
+	} catch (error) {
+		console.error("❌ Error placing order:", error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to place order",
+			error: error.message,
+		});
+	}
+};
+
+const getOrders = async (req, res) => {
+	try {
+		const { buyerId } = req.params;
+		if (!buyerId) {
+			return res.status(400).json({ message: "Buyer ID is required" });
+		}
+
+		const products = await Product.find({ "buyer.user": buyerId })
+			.select("title price images buyer")
+			.lean();
+
+		const orders = [];
+
+		products.forEach((product) => {
+			product.buyer.forEach((b) => {
+				if (b.user.toString() === buyerId) {
+					orders.push({
+						_id: product._id,
+						title: product.title,
+						price: product.price,
+						images: product.images,
+						quantity: b.quantity,
+						purchaseDate: b.purchaseDate,
+					});
+				}
+			});
+		});
+
+		res.status(200).json({
+			success: true,
+			count: orders.length,
+			orders,
+		});
+	} catch (error) {
+		console.error("❌ Failed to fetch orders:", error);
+		res.status(500).json({ success: false, message: "Failed to fetch orders" });
+	}
+};
 module.exports = {
 	upload,
 	addProducts,
@@ -378,4 +528,7 @@ module.exports = {
 	decreaseQuantity,
 	increaseQuantity,
 	resetQuantity,
+	getCartItems,
+	placeOrder,
+	getOrders,
 };
