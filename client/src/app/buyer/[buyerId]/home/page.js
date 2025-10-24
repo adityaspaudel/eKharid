@@ -182,10 +182,18 @@ const BuyerHome = () => {
 						Search
 					</button>
 					<Link
-						className="bg-blue-600 hover:bg-blue-700 w-8 rounded-sm flex justify-center items-center"
+						className="bg-indigo-600 hover:bg-indigo-700 w-8 rounded-sm flex justify-center items-center"
 						href={`/buyer/${buyerId}/home/myCart`}
+						title="my carts"
 					>
-						<button className="cursor-pointer text-center">🛒</button>
+						🛒
+					</Link>
+					<Link
+						className="bg-indigo-600 hover:bg-indigo-700  rounded-sm flex justify-center items-center px-2 text-white"
+						href={`/buyer/${buyerId}/home/myOrders`}
+						title="my orders"
+					>
+						🛍️
 					</Link>
 					<button
 						onClick={() => {
@@ -274,7 +282,7 @@ const BuyerHome = () => {
 								<div className="mt-4 flex flex-col gap-2">
 									{currentQuantity === 0 ? (
 										<button
-											className={`w-full py-2 flex items-center justify-center font-bold text-white rounded-lg transition-all ${
+											className={`w-full py-2 flex items-center justify-center  cursor-pointer font-bold text-white rounded-lg transition-all ${
 												isAvailable
 													? "bg-indigo-600 hover:bg-indigo-700 shadow-md"
 													: "bg-gray-400 cursor-not-allowed"
@@ -316,7 +324,7 @@ const BuyerHome = () => {
 											</div>
 
 											<button
-												className="w-full py-2 flex items-center justify-center font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
+												className="w-full py-2 flex items-center justify-center cursor-pointer font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
 												onClick={() => handleReset(product._id)}
 											>
 												<GrPowerReset className="w-3 h-3 mr-2" />
