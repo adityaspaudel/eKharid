@@ -69,8 +69,8 @@ Your Cart Our Care
 ---
 
 ## Phase 5: Order Management 📦
-- [ ] Order model (MongoDB)
-- [ ] View user order history
+- [x] Order model (MongoDB)
+- [x] View user order history
 - [ ] Admin order management (update status, delete order)
 - [ ] Email notifications for order status updates
 
