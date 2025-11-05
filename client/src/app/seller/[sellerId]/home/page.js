@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 
-export default function SellerHome() {
+export default memo(function SellerHome() {
   const { sellerId } = useParams();
   const router = useRouter();
 
@@ -20,6 +20,7 @@ export default function SellerHome() {
     stock: "",
   });
   const [selectedImages, setSelectedImages] = useState([]);
+  const [toggleAddProduct, setToggleAddProduct] = useState("hidden");
 
   // Fetch seller products
   const fetchProducts = useCallback(async () => {
@@ -133,6 +134,13 @@ export default function SellerHome() {
   // handle logout
   const handleLogout = () => router.push("/login");
 
+  const addProductTogglerUpdate = (e) => {
+    e.preventDefault();
+
+    setToggleAddProduct((prev) => (prev === "hidden" ? "block" : "hidden"));
+  };
+
+  console.log("toggleAddProduct", toggleAddProduct);
   return (
     <div className="bg-amber-50 text-black p-6 flex flex-col gap-4 w-full text-sm">
       <div className="flex justify-between items-center w-full ">
@@ -150,7 +158,17 @@ export default function SellerHome() {
           Logout
         </button>
       </div>
-      <AddProducts sellerId={sellerId} />
+      <div className="flex flex-col font-bold text-white items-center text-2xl justify-center ">
+        <button
+          onClick={addProductTogglerUpdate}
+          className={`bg-green-500 px-2 py-1 hover:bg-green-600 rounded-xl cursor-pointer`}
+        >
+          Add a Product
+        </button>
+      </div>
+      <div className={`${toggleAddProduct}`}>
+        <AddProducts sellerId={sellerId} className={`${toggleAddProduct}`} />
+      </div>
       <h1 className="text-2xl font-bold w-full text-center">
         My Products List
       </h1>
@@ -282,4 +300,4 @@ export default function SellerHome() {
       )}
     </div>
   );
-}
+});
