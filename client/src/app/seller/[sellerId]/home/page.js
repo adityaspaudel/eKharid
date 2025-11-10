@@ -106,11 +106,12 @@ export default memo(function SellerHome() {
           stock: "",
         });
         setSelectedImages([]);
+        fetchProducts();
       } catch (error) {
         console.error("Error updating product:", error);
       }
     },
-    [productChange, selectedImages]
+    [productChange, selectedImages, fetchProducts]
   );
   const handleDelete = useCallback(
     async (e, productId) => {
@@ -142,7 +143,7 @@ export default memo(function SellerHome() {
 
   console.log("toggleAddProduct", toggleAddProduct);
   return (
-    <div className="bg-amber-50 text-black p-6 flex flex-col gap-4 w-full text-sm">
+    <div className="bg-indigo-200 text-black p-6 flex flex-col gap-4 w-full text-sm">
       <div className="flex justify-between items-center w-full ">
         <Image
           className="cursor-pointer"
@@ -161,13 +162,24 @@ export default memo(function SellerHome() {
       <div className="flex flex-col font-bold text-white items-center text-2xl justify-center ">
         <button
           onClick={addProductTogglerUpdate}
-          className={`bg-green-500 px-2 py-1 hover:bg-green-600 rounded-xl cursor-pointer`}
+          className={`bg-green-400 px-4  hover:bg-green-500 rounded-md cursor-pointer`}
         >
           Add a Product
         </button>
       </div>
-      <div className={`${toggleAddProduct}`}>
-        <AddProducts sellerId={sellerId} className={`${toggleAddProduct}`} />
+      <div
+        className={`${toggleAddProduct} bg-white flex flex-col items-center justify-center w-96`}
+      >
+        <AddProducts sellerId={sellerId} className={`${toggleAddProduct} `} />
+        {products.length > 0 ? (
+          <div>
+            {products.map((pd, idx) => (
+              <div key={idx}></div>
+            ))}
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
       <h1 className="text-2xl font-bold w-full text-center">
         My Products List
@@ -257,7 +269,7 @@ export default memo(function SellerHome() {
                       type="file"
                       multiple
                       onChange={handleImageChange}
-                      className="w-full text-sm"
+                      className="w-full text-sm cursor-pointer bg-green-400 rounded-sm px-2"
                     />
                     {selectedImages.length > 0 && (
                       <div className="flex gap-2 mt-2 overflow-x-auto">
@@ -281,13 +293,13 @@ export default memo(function SellerHome() {
                       onClick={(e) =>
                         handleSaveAndUpdateProduct(e, product._id)
                       }
-                      className="bg-indigo-600 text-white px-3 py-1 rounded"
+                      className="bg-indigo-600 text-white px-3 py-1 rounded cursor-pointer"
                     >
                       Update
                     </button>
                     <button
                       onClick={() => setEditingProductId(null)}
-                      className="bg-gray-500 text-white px-3 py-1 rounded"
+                      className="bg-gray-500 text-white px-3 py-1 rounded cursor-pointer"
                     >
                       Cancel
                     </button>
