@@ -104,8 +104,8 @@ function AddProducts({ sellerId }) {
   );
 
   return (
-    <main className="p-10 flex flex-col gap-6 max-w-96 mx-auto">
-      <h1 className="text-3xl font-bold text-center">🛍️ Add Product</h1>
+    <main className="p-10 flex flex-col gap-6 max-w-96 mx-auto w-[400px]">
+      {/* <h1 className="text-3xl font-bold text-center"></h1> */}
 
       {message && (
         <div className="bg-green-200 text-green-800 p-2 rounded">{message}</div>

@@ -37,8 +37,8 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
-      <div className="w-full max-w-md bg-white transition shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
+    <div className="flex items-center justify-center min-h-screen bg-indigo-200 text-black">
+      <div className="w-full max-w-md bg-white transition shadow-md shadow gray-400 shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
         <div className="flex flex-col gap-0">
           <Image
             src="/eKharidLogo.png"
@@ -126,7 +126,7 @@ export default function SignInPage() {
                   placeholder="Enter password"
                   ref={passwordRef1}
                 />
-                <div onClick={handleClick} className="text-sm">
+                <div onClick={handleClick} className="text-sm cursor-pointer">
                   {showHidePassword == false ? (
                     <div>🐵 show</div>
                   ) : (
