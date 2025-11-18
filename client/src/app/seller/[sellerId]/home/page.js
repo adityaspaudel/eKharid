@@ -203,7 +203,7 @@ export default memo(function SellerHome() {
                     alt={`Product image ${idx + 1}`}
                     width={120}
                     height={120}
-                    className="rounded object-cover border flex-shrink-0"
+                    className="rounded object-cover border shrink-0"
                   />
                 ))}
               </div>
@@ -280,7 +280,7 @@ export default memo(function SellerHome() {
                             alt="Preview"
                             width={60}
                             height={60}
-                            className="rounded object-cover border flex-shrink-0"
+                            className="rounded object-cover border shrink-0"
                           />
                         ))}
                       </div>
