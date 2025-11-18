@@ -5,6 +5,19 @@ import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default memo(function SellerHome() {
   const { sellerId } = useParams();
@@ -232,6 +245,7 @@ export default memo(function SellerHome() {
                 >
                   {editingProductId === product._id ? "Close" : "Edit"}
                 </button>
+                
                 <button
                   onClick={(e) => handleDelete(e, product._id)}
                   className="text-sm hover:text-md cursor-pointer text-red-500 hover:bg-amber-200 px-2"
@@ -239,6 +253,8 @@ export default memo(function SellerHome() {
                   delete
                 </button>
               </div>
+
+             
 
               {/* Edit Form */}
               {editingProductId === product._id && (

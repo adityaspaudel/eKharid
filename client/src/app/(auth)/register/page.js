@@ -16,7 +16,7 @@ export default function SignupPage() {
       .required("Full name is required"),
     username: Yup.string()
       .min(3, "username must be at least 3 characters")
-      .required("username is required"),
+      .required("Username is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
@@ -32,7 +32,7 @@ export default function SignupPage() {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
+    <div className="flex items-center justify-center min-h-screen bg-indigo-200 text-black p-8">
       <div className="w-full max-w-md bg-white rounded-2xl transition shadow hover:shadow-gray-600 hover:shadow-md px-8 py-4">
         <div>
           <Image src="/eKharidLogo.png" alt="logo" height={100} width={100} />
@@ -88,7 +88,7 @@ export default function SignupPage() {
                 <Field
                   type="text"
                   name="fullName"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your full name"
                 />
                 <ErrorMessage
@@ -106,7 +106,7 @@ export default function SignupPage() {
                 <Field
                   type="text"
                   name="username"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your username"
                 />
                 <ErrorMessage
@@ -124,7 +124,7 @@ export default function SignupPage() {
                 <Field
                   type="email"
                   name="email"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -142,7 +142,7 @@ export default function SignupPage() {
                 <Field
                   type="password"
                   name="password"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 py-2 border rounded-lg border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter password"
                 />
                 <ErrorMessage
@@ -160,7 +160,7 @@ export default function SignupPage() {
                 <Field
                   type="password"
                   name="confirmPassword"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 border-gray-400 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Re-enter password"
                 />
                 <ErrorMessage
@@ -192,11 +192,11 @@ export default function SignupPage() {
             </Form>
           )}
         </Formik>
-        <div className="text-sm">
-          already have an account?{" "}
+        <div className="text-sm mt-2">
+          Already have an account?{" "}
           <Link
             href="/login"
-            className="underline  hover:text-indigo-700 shadow-md"
+            className="underline  hover:text-indigo-700 shadow-md "
           >
             Login here
           </Link>

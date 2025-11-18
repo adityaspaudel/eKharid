@@ -18,19 +18,19 @@ const productRoute = require("./routes/productRoute");
 // middleware
 app.use(express.json());
 app.use(cors());
-app.use(morgan());
+app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // database connection
 dbConnect();
 
 // route
-
 app.use(userRoute);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(productRoute);
+
 // application
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
