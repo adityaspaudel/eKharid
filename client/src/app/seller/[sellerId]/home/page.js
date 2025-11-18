@@ -5,6 +5,19 @@ import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default memo(function SellerHome() {
   const { sellerId } = useParams();
@@ -143,7 +156,7 @@ export default memo(function SellerHome() {
 
   console.log("toggleAddProduct", toggleAddProduct);
   return (
-    <div className="bg-indigo-200 text-black p-6 flex flex-col gap-4 w-full text-sm">
+    <div className="bg-indigo-200 text-black p-6 flex flex-col items-center justify-center gap-4 w-full text-sm">
       <div className="flex justify-between items-center w-full ">
         <Image
           className="cursor-pointer"
@@ -188,11 +201,11 @@ export default memo(function SellerHome() {
       {products.length === 0 ? (
         <p className="text-gray-600 mt-4">No products found.</p>
       ) : (
-        <div className="flex flex-wrap gap-2 ">
+        <div className="flex flex-wrap items-center justify-center  gap-2 ">
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-orange-100 hover:bg-amber-200 rounded-md shadow p-4 w-78 border-gray-600 hover:shadow-md"
+              className="bg-orange-100 hover:bg-amber-200 rounded-md shadow p-4 w-78 min-h-80 border-gray-600 hover:shadow-md"
             >
               {/* Product Images */}
               <div className="flex gap-2 overflow-x-auto mb-2">
@@ -203,7 +216,7 @@ export default memo(function SellerHome() {
                     alt={`Product image ${idx + 1}`}
                     width={120}
                     height={120}
-                    className="rounded object-cover border flex-shrink-0"
+                    className="rounded object-cover border shrink-0"
                   />
                 ))}
               </div>
@@ -232,6 +245,7 @@ export default memo(function SellerHome() {
                 >
                   {editingProductId === product._id ? "Close" : "Edit"}
                 </button>
+
                 <button
                   onClick={(e) => handleDelete(e, product._id)}
                   className="text-sm hover:text-md cursor-pointer text-red-500 hover:bg-amber-200 px-2"
@@ -280,7 +294,7 @@ export default memo(function SellerHome() {
                             alt="Preview"
                             width={60}
                             height={60}
-                            className="rounded object-cover border flex-shrink-0"
+                            className="rounded object-cover border shrink-0"
                           />
                         ))}
                       </div>

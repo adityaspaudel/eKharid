@@ -38,7 +38,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-indigo-200 text-black">
-      <div className="w-full max-w-md bg-white transition shadow-md shadow gray-400 shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
+      <div className="w-full max-w-md bg-white transition gray-400 shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
         <div className="flex flex-col gap-0">
           <Image
             src="/eKharidLogo.png"
@@ -98,13 +98,13 @@ export default function SignInPage() {
             <Form className="space-y-5">
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block  font-medium text-gray-700">
                   Email
                 </label>
                 <Field
                   type="email"
                   name="email"
-                  className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="mt-1 w-full px-3 py-2  border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   placeholder="Enter your email"
                 />
                 <ErrorMessage

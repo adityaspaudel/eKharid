@@ -120,7 +120,7 @@ function AddProducts({ sellerId }) {
             placeholder={field[0].toUpperCase() + field.slice(1)}
             value={product[field]}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className=" p-2 rounded  border border-gray-400 focus:border-blue-600"
             required
           />
         ))}
@@ -146,7 +146,7 @@ function AddProducts({ sellerId }) {
           multiple
           accept="image/*"
           onChange={handleFileChange}
-          className="border p-2 rounded"
+          className="border p-2 rounded bg-indigo-200 hover:text-green-500"
           required
         />
 
