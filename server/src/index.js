@@ -31,8 +31,12 @@ dbConnect();
 app.use(userRoute);
 app.use(productRoute);
 
+app.use("/", (req, res) => {
+	console.log("app is running");
+	res.send({ message: "app is running" });
+});
 // application
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
-  console.log(`application is running on http://localhost:${port}`);
+	console.log(`application is running on http://localhost:${port}`);
 });
