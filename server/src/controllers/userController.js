@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "fjdn34JNRF34kDNSK3fnckdsaW";
 // user registration
 const userRegistration = async (req, res) => {
@@ -89,10 +89,16 @@ const userLogin = async (req, res) => {
 			res.status(404).json({ message: `user not found` });
 		} else {
 			console.log(`user login successful`, userByEmail);
+			const token = jwt.sign({ id: userByEmail._id }, JWT_SECRET, {
+				expiresIn: "7d",
+			});
 
 			res.status(200).json({
-				message: `user login successful,\n${email}`,
-				user: userByEmail,
+				message: `user login successful`,
+				email: userByEmail.email,
+				username: userByEmail.username,
+				role: userByEmail.role,
+				token,
 			});
 		}
 	} catch (error) {
