@@ -31,10 +31,40 @@ dbConnect();
 app.use(userRoute);
 app.use(productRoute);
 
+// default route 
 app.use("/", (req, res) => {
 	console.log("app is running");
 	res.send({ message: "app is running" });
 });
+
+// routing error handling
+app.use((req, res) => {
+  console.warn("Route not found:", req.originalUrl);
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Global error handler (Express)
+app.use((err, req, res, next) => {
+  console.error("Global Error:", err);
+
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
+
+// Catch unhandled errors
+process.on("uncaughtException", (error) => {
+	console.log("Uncaught Exception:", error);
+});
+
+process.on("unhandledRejection", (error) => {
+	console.log("Unhandled Promise Rejection:", error.message);
+});
+
 // application
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
