@@ -93,7 +93,7 @@ const MyOrders = () => {
 								>
 									<div className="w-16 h-16 relative flex-shrink-0">
 										<Image
-											src={`http://localhost:8000${item.images[0]?.imageUrl}`}
+											src={`${item.images[0]?.imageUrl}`}
 											alt={item.title}
 											fill
 											className="object-cover rounded"

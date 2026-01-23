@@ -20,7 +20,7 @@ const ProductDetails = () => {
 	const [error, setError] = useState(null);
 	const [mainImage, setMainImage] = useState(""); // State for the currently selected main image
 
-	const imageBaseUrl = "http://localhost:8000";
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 	// Memoized function to fetch product details
 	const fetchProductDetails = useCallback(async () => {
@@ -28,7 +28,7 @@ const ProductDetails = () => {
 		setError(null);
 		try {
 			const response = await fetch(
-				`${imageBaseUrl}/product/${productId}/getProductById`
+				`${NEXT_PUBLIC_API_URL}/product/${productId}/getProductById`,
 			);
 
 			if (!response.ok) {
@@ -39,7 +39,7 @@ const ProductDetails = () => {
 			setSpecificProduct(data);
 
 			if (data?.product?.images?.length > 0) {
-				setMainImage(`${imageBaseUrl}${data.product.images[0].imageUrl}`);
+				setMainImage(`${data.product.images[0].imageUrl}`);
 			}
 		} catch (err) {
 			console.error("Failed to fetch product: ", err);
@@ -91,10 +91,10 @@ const ProductDetails = () => {
 	// Minimal API function for cart actions
 	const updateCart = async (action) => {
 		const urlMap = {
-			add: `${imageBaseUrl}/product/${buyerId}/increaseQuantity`,
-			increase: `${imageBaseUrl}/product/${buyerId}/increaseQuantity`,
-			decrease: `${imageBaseUrl}/product/${buyerId}/decreaseQuantity`,
-			reset: `${imageBaseUrl}/product/${buyerId}/resetQuantity`,
+			add: `${NEXT_PUBLIC_API_URL}/product/${buyerId}/increaseQuantity`,
+			increase: `${NEXT_PUBLIC_API_URL}/product/${buyerId}/increaseQuantity`,
+			decrease: `${NEXT_PUBLIC_API_URL}/product/${buyerId}/decreaseQuantity`,
+			reset: `${NEXT_PUBLIC_API_URL}/product/${buyerId}/resetQuantity`,
 		};
 
 		try {
@@ -126,21 +126,23 @@ const ProductDetails = () => {
 					{/* Main Image Display */}
 					<div className="mb-4 aspect-square bg-gray-100 rounded-xl overflow-hidden relative">
 						{mainImage && (
-							<Image
-								src={mainImage}
-								alt={product.title}
-								fill
-								className="object-contain transition-transform duration-300 hover:scale-105"
-								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
-								priority
-							/>
+							<div>
+								<Image
+									src={mainImage}
+									alt={product.title}
+									fill
+									className="object-contain transition-transform duration-300 hover:scale-105"
+									sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+									priority
+								/>
+							</div>
 						)}
 					</div>
 
 					{/* Thumbnail Gallery */}
 					<div className="flex gap-3 overflow-x-auto pb-2">
 						{product.images.map((img, ind) => {
-							const fullImageUrl = `${imageBaseUrl}${img?.imageUrl}`;
+							const fullImageUrl = `${img?.imageUrl}`;
 							return (
 								<div
 									key={ind}
@@ -158,6 +160,7 @@ const ProductDetails = () => {
 										className="object-cover rounded-md"
 										sizes="80px"
 									/>
+									{/* {fullImageUrl} */}
 								</div>
 							);
 						})}

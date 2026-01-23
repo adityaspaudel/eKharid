@@ -79,13 +79,13 @@ const BuyerHome = () => {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ productId }),
-				}
+				},
 			);
 			if (!res.ok) throw new Error("Failed to increase product");
 			const data = await res.json();
 			// Update frontend state
 			setProductsList((prev) =>
-				prev.map((p) => (p._id === productId ? data.product : p))
+				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
 			console.error(err);
@@ -101,12 +101,12 @@ const BuyerHome = () => {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ productId }),
-				}
+				},
 			);
 			if (!res.ok) throw new Error("Failed to decrease product");
 			const data = await res.json();
 			setProductsList((prev) =>
-				prev.map((p) => (p._id === productId ? data.product : p))
+				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
 			console.error(err);
@@ -122,12 +122,12 @@ const BuyerHome = () => {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ productId }),
-				}
+				},
 			);
 			if (!res.ok) throw new Error("Failed to reset product");
 			const data = await res.json();
 			setProductsList((prev) =>
-				prev.map((p) => (p._id === productId ? data.product : p))
+				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
 			console.error(err);
@@ -240,11 +240,13 @@ const BuyerHome = () => {
 								<Image
 									className="object-cover"
 									alt={product?.title || "Product Image"}
-									src={`${IMAGE_BASE_URL}${product.images[0]?.imageUrl}`}
+									src={`${product.images[0]?.imageUrl}`}
 									fill
 									sizes="(max-width: 640px) 100vw, 200px"
 									priority={index < 3}
 								/>
+
+								{/* {product.images[0]?.imageUrl} */}
 							</Link>
 
 							{/* Info */}
