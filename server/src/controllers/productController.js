@@ -46,8 +46,17 @@ const addProducts = async (req, res) => {
 					{ folder: "posts" },
 				);
 
+				// This logic ensures that even if a local URL somehow gets
+				// attached, only the Cloudinary part is saved.
+				let cleanUrl = uploadResult.secure_url;
+
+				if (cleanUrl.includes("https://res.cloudinary.com")) {
+					// If it contains Cloudinary, we strip everything before "https://"
+					cleanUrl = cleanUrl.substring(cleanUrl.indexOf("https://"));
+				}
+
 				imageUrls.push({
-					imageUrl: uploadResult.secure_url,
+					imageUrl: cleanUrl.trim(),
 					public_id: uploadResult.public_id,
 				});
 			}

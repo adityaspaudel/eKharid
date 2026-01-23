@@ -213,7 +213,7 @@ export default memo(function SellerHome() {
 								{product.images.map((img, idx) => (
 									<Image
 										key={idx}
-										src={`http://localhost:8000${img.imageUrl}`}
+										src={`${img.imageUrl}`}
 										alt={`Product image ${idx + 1}`}
 										width={120}
 										height={120}
