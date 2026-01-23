@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "fjdn34JNRF34kDNSK3fnckdsaW";
 // user registration
 const userRegistration = async (req, res) => {
@@ -76,28 +76,49 @@ const userRegistration = async (req, res) => {
 const userLogin = async (req, res) => {
 	try {
 		const { email, password } = req.body;
+
 		if (!email || !password) {
-			console.error(`please enter email and password`);
-			res.status(204).json({ message: `please enter email and password` });
-		}
-		const userByEmail = await User.findOne({ email });
-
-		const isMatch = await bcrypt.compare(password, userByEmail.password);
-
-		if (!isMatch) {
-			console.error(`user not found`);
-			res.status(404).json({ message: `user not found` });
-		} else {
-			console.log(`user login successful`, userByEmail);
-
-			res.status(200).json({
-				message: `user login successful,\n${email}`,
-				user: userByEmail,
+			return res.status(400).json({
+				message: "Email and password are required",
 			});
 		}
+
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(401).json({
+				message: "Invalid email or password",
+			});
+		}
+
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return res.status(401).json({
+				message: "Invalid email or password",
+			});
+		}
+
+		const token = jwt.sign(
+			{ id: user._id, role: user.role },
+			process.env.JWT_SECRET,
+			{ expiresIn: "7d" },
+		);
+
+		// ✅ Send token in response (NO cookie)
+		return res.status(200).json({
+			message: "Login successful",
+			token,
+			user: {
+				_id: user._id,
+				email: user.email,
+				username: user.username,
+				role: user.role,
+			},
+		});
 	} catch (error) {
-		console.error(`user login failed`);
-		res.status(500).json(`user login failed,\n${error}`);
+		console.error("Login failed:", error);
+		return res.status(500).json({
+			message: "Internal server error",
+		});
 	}
 };
 

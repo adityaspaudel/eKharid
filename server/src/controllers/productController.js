@@ -4,21 +4,21 @@ const fs = require("fs");
 const path = require("path");
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
-
+const cloudinary = require("../middlewares/cloudinary");
 // Ensure uploads folder exists
-const uploadDir = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadDir)) {
-	fs.mkdirSync(uploadDir, { recursive: true });
-	console.log("📁 Created upload directory:", uploadDir);
-}
+// const uploadDir = path.join(__dirname, "../uploads");
+// if (!fs.existsSync(uploadDir)) {
+// 	fs.mkdirSync(uploadDir, { recursive: true });
+// 	console.log("📁 Created upload directory:", uploadDir);
+// }
 
-// Multer setup
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => cb(null, uploadDir),
-	filename: (req, file, cb) =>
-		cb(null, Date.now() + path.extname(file.originalname)),
-});
-const upload = multer({ storage });
+// // Multer setup
+// const storage = multer.diskStorage({
+// 	destination: (req, file, cb) => cb(null, uploadDir),
+// 	filename: (req, file, cb) =>
+// 		cb(null, Date.now() + path.extname(file.originalname)),
+// });
+// const upload = multer({ storage });
 
 // Add new product
 
@@ -32,11 +32,26 @@ const addProducts = async (req, res) => {
 		}
 
 		// Upload images (local upload — adjust for Cloudinary/S3 later)
-		const imageFiles = req.files || [];
-		const images = imageFiles.map((file) => ({
-			imageUrl: `/uploads/${file.filename}`,
-		}));
+		// const imageFiles = req.files || [];
+		// const images = imageFiles.map((file) => ({
+		// 	imageUrl: `/uploads/${file.filename}`,
+		// }));
 
+		const imageUrls = [];
+
+		if (req.files && req.files.length > 0) {
+			for (const file of req.files) {
+				const uploadResult = await cloudinary.uploader.upload(
+					`data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+					{ folder: "posts" },
+				);
+
+				imageUrls.push({
+					imageUrl: uploadResult.secure_url,
+					public_id: uploadResult.public_id,
+				});
+			}
+		}
 		const { title, description, price, category, stock } = req.body;
 
 		const newProduct = new Product({
@@ -46,7 +61,7 @@ const addProducts = async (req, res) => {
 			category,
 			stock,
 			seller: seller._id,
-			images,
+			images: imageUrls,
 		});
 
 		await newProduct.save();
@@ -116,7 +131,7 @@ const updateProduct = async (req, res) => {
 			{
 				new: true,
 				runValidators: true,
-			}
+			},
 		);
 
 		res.status(200).json({
@@ -257,7 +272,7 @@ const increaseQuantity = async (req, res) => {
 
 		// Add buyer info
 		const existingBuyer = product.buyer.find(
-			(b) => b.user.toString() === buyerId
+			(b) => b.user.toString() === buyerId,
 		);
 		if (existingBuyer) {
 			existingBuyer.quantity += 1;
@@ -295,7 +310,7 @@ const decreaseQuantity = async (req, res) => {
 				.json({ success: false, message: "Product not found" });
 
 		const buyerRecord = product.buyer.find(
-			(b) => b.user.toString() === buyerId
+			(b) => b.user.toString() === buyerId,
 		);
 		if (!buyerRecord || buyerRecord.quantity <= 0)
 			return res
@@ -309,7 +324,7 @@ const decreaseQuantity = async (req, res) => {
 		// Remove buyer from array if quantity is 0
 		if (buyerRecord.quantity === 0) {
 			product.buyer = product.buyer.filter(
-				(b) => b.user.toString() !== buyerId
+				(b) => b.user.toString() !== buyerId,
 			);
 		}
 
@@ -342,7 +357,7 @@ const resetQuantity = async (req, res) => {
 				.json({ success: false, message: "Product not found" });
 
 		const buyerRecord = product.buyer.find(
-			(b) => b.user.toString() === buyerId
+			(b) => b.user.toString() === buyerId,
 		);
 		if (!buyerRecord)
 			return res
@@ -388,7 +403,7 @@ const getCartItems = async (req, res) => {
 		// 4️⃣ Filter to include only this buyer’s details
 		const filteredCart = cartItems.map((product) => {
 			const buyerInfo = product.buyer.find(
-				(b) => b.user.toString() === buyerId
+				(b) => b.user.toString() === buyerId,
 			);
 			return {
 				_id: product._id,
@@ -517,7 +532,6 @@ const getOrders = async (req, res) => {
 	}
 };
 module.exports = {
-	upload,
 	addProducts,
 	getProducts,
 	updateProduct,
