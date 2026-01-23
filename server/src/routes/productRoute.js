@@ -3,7 +3,6 @@ const express = require("express");
 const {
 	addProducts,
 	getProducts,
-	upload,
 	updateProduct,
 	getAllProducts,
 	getProductById,
@@ -16,19 +15,20 @@ const {
 	placeOrder,
 	getOrders,
 } = require("../controllers/productController");
+const upload = require("../middlewares/multerConfig");
 const router = express.Router();
 
 router.post(
 	"/seller/:sellerId/addProducts",
 	upload.array("images", 5),
-	addProducts
+	addProducts,
 );
 
 router.get("/seller/:sellerId/getProducts", getProducts);
 router.put(
 	"/product/:productId/updateProduct",
 	upload.array("images", 5),
-	updateProduct
+	updateProduct,
 );
 router.get("/product/getAllProducts", getAllProducts);
 router.get("/product/:productId/getProductById", getProductById);
