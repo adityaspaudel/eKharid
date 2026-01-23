@@ -14,7 +14,7 @@ export default function SignInPage() {
 	const [showHidePassword, setShowHidePassword] = useState(false);
 	const [inputType, setInputType] = useState("password");
 
-	// ✅ Yup Validation Schema
+	const [apiMessage, setApiMessage] = useState(null);
 	const SignupSchema = Yup.object().shape({
 		email: Yup.string()
 			.email("Invalid email address")
@@ -27,40 +27,36 @@ export default function SignInPage() {
 	const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 	const handleClick = () => {
-		if (showHidePassword == false) {
-			setShowHidePassword(true);
-			setInputType("text");
-		} else {
-			setShowHidePassword(false);
-			setInputType("password");
-		}
+		setShowHidePassword(!showHidePassword);
+		setInputType(showHidePassword ? "password" : "text");
 	};
 
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-indigo-200 text-black">
-			<div className="w-full max-w-md bg-white transition gray-400 shadow hover:shadow-gray-600  hover:shadow-md rounded-2xl  p-8">
-				<div className="flex flex-col gap-0">
+		// Background: Dark Gray (Stone-900)
+		<div className="flex items-center justify-center min-h-screen bg-stone-900 text-white px-4">
+			{/* Card: White with Gray border */}
+			<div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border-t-8 border-orange-600">
+				<div className="flex flex-col items-center mb-6">
 					<Image
 						src="/eKharidLogo.png"
 						alt="logo"
-						height={100}
-						width={100}
-						className="cursor-pointer"
+						height={80}
+						width={80}
+						className="cursor-pointer mb-2"
 					/>
-					<h1 className="text-2xl  font-bold text-center mb-6 text-gray-800">
-						Login
+					<h1 className="text-3xl font-extrabold text-stone-800">
+						Welcome Back
 					</h1>
+					<p className="text-stone-500 text-sm">
+						Please sign in to your account
+					</p>
 				</div>
 
 				<Formik
-					initialValues={{
-						email: "",
-						password: "",
-					}}
+					initialValues={{ email: "", password: "" }}
 					validationSchema={SignupSchema}
-					onSubmit={async (values, { resetForm }) => {
+					onSubmit={async (values, { setSubmitting, resetForm }) => {
 						try {
-							console.log("✅ Submitted Values:", values);
 							const response = await fetch(
 								"http://localhost:8000/user/userLogin",
 								{
@@ -72,27 +68,26 @@ export default function SignInPage() {
 							await sleep(500);
 
 							const data = await response.json();
-							console.log("response, ", data);
 							if (!response.ok) {
+								setApiMessage(data.message);
+
 								throw new Error(data.message || "Something went wrong");
 							}
-							alert(JSON.stringify(data));
-
 							localStorage.setItem("userToken", data.user);
 							setSubmittedData(data);
-							alert("✅ Signin successful!");
 							resetForm();
 
-							if (data.user?.role === "buyer") {
+							if (data.user?.role === "buyer")
 								router.push(`/buyer/${data.user._id}/home`);
-							}
-							if (data.user?.role === "seller") {
+							if (data.user?.role === "seller")
 								router.push(`/seller/${data.user._id}/home`);
-							}
 						} catch (error) {
-							console.error(`error occurred while form submission,\n ${error}`);
+							console.error(error);
 						} finally {
 							setSubmitting(false);
+							setTimeout(() => {
+								setApiMessage(null);
+							}, 5000);
 						}
 					}}
 				>
@@ -100,61 +95,62 @@ export default function SignInPage() {
 						<Form className="space-y-5">
 							{/* Email */}
 							<div>
-								<label className="block  font-medium text-gray-700">
-									Email
+								<label className="block text-sm font-semibold text-stone-700">
+									Email Address
 								</label>
 								<Field
 									type="email"
 									name="email"
-									className="mt-1 w-full px-3 py-2  border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-									placeholder="Enter your email"
+									className="mt-1 w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-600 transition-all"
+									placeholder="name@company.com"
 								/>
 								<ErrorMessage
 									name="email"
 									component="div"
-									className="text-sm text-red-500 mt-1"
+									className="text-xs text-red-600 mt-1 font-medium"
 								/>
 							</div>
 
 							{/* Password */}
-							<div>
-								<label className="block text-sm font-medium text-gray-700">
+							<div className="relative">
+								<label className="block text-sm font-semibold text-stone-700">
 									Password
 								</label>
-								<Field
-									type={inputType}
-									name="password"
-									className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-									placeholder="Enter password"
-									ref={passwordRef1}
-								/>
-								<div onClick={handleClick} className="text-sm cursor-pointer">
-									{showHidePassword == false ? (
-										<div>🐵 show</div>
-									) : (
-										<div>🙈 hide</div>
-									)}
+								<div className="relative">
+									<Field
+										type={inputType}
+										name="password"
+										className="mt-1 w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-600 transition-all"
+										placeholder="••••••••"
+									/>
+									<div
+										onClick={handleClick}
+										className="absolute right-3 top-1/2 -translate-y-1/2 mt-0.5 text-xs font-bold text-orange-600 cursor-pointer hover:text-orange-700 select-none"
+									>
+										{showHidePassword ? "HIDE 🙈" : "SHOW 🐵"}
+									</div>
 								</div>
 								<ErrorMessage
 									name="password"
 									component="div"
-									className="text-sm text-red-500 mt-1"
+									className="text-xs text-red-600 mt-1 font-medium"
 								/>
 							</div>
 
-							{/* Submit Button */}
+							{/* Submit Button: Dark Orange */}
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								className="w-full bg-indigo-600 hover:bg-indigo-700 shadow-md text-white font-semibold py-2 rounded-lg transition"
+								className="w-full bg-orange-600 hover:bg-orange-700 active:scale-[0.98] text-white font-bold py-3 rounded-lg shadow-lg shadow-orange-900/20 transition-all disabled:opacity-70"
 							>
-								{isSubmitting ? "Signing In..." : "Sign In"}
+								{isSubmitting ? "Authenticating..." : "SIGN IN"}
 							</button>
-							<div className="text-sm ">
-								Dont have an account?{" "}
+
+							<div className="text-center text-sm text-stone-600 font-medium">
+								Don&apos;t have an account?{" "}
 								<Link
 									href="/register"
-									className="underline hover:text-indigo-700"
+									className="text-orange-600 hover:underline font-bold"
 								>
 									Register here
 								</Link>
@@ -162,14 +158,15 @@ export default function SignInPage() {
 						</Form>
 					)}
 				</Formik>
-				<br />
 
-				{/* Show submitted data for demo */}
-				{submittedData && (
-					<div className="mt-6 p-3 bg-green-50 text-green-700 rounded-lg text-sm">
-						✅ SignIn successful! Data logged in console.
-					</div>
-				)}
+				<div className="text-black">
+					{submittedData && (
+						<div className="mt-6 p-3 bg-green-100 border border-green-200 text-green-800 rounded-lg text-center text-xs font-bold animate-pulse">
+							SUCCESS: Redirecting...
+						</div>
+					)}
+					{apiMessage && <div>{apiMessage}</div>}
+				</div>
 			</div>
 		</div>
 	);
