@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Info } from "lucide-react";
+import { ShoppingCart, Info, Search, LogOut } from "lucide-react";
 import { IoAddCircleSharp } from "react-icons/io5";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
@@ -20,7 +20,6 @@ const BuyerHome = () => {
 	const [error, setError] = useState(null);
 	const [searchText, setSearchText] = useState("");
 
-	// Fetch all products
 	const getAllProducts = useCallback(async () => {
 		setIsLoading(true);
 		setError(null);
@@ -31,7 +30,6 @@ const BuyerHome = () => {
 			const data = await response.json();
 			setProductsList(data.products || []);
 		} catch (err) {
-			console.error("Error fetching products:", err);
 			setError("Failed to load products. Please try again.");
 		} finally {
 			setIsLoading(false);
@@ -42,7 +40,6 @@ const BuyerHome = () => {
 		getAllProducts();
 	}, [getAllProducts]);
 
-	// Handle search
 	const handleSearch = useCallback(async () => {
 		if (!searchText.trim()) {
 			getAllProducts();
@@ -60,17 +57,12 @@ const BuyerHome = () => {
 			const data = await response.json();
 			setProductsList(data);
 		} catch (err) {
-			console.error(err);
-			setError("Failed to search products. Please try again.");
+			setError("Failed to search products.");
 		} finally {
 			setIsLoading(false);
 		}
 	}, [searchText, getAllProducts]);
 
-	const handleChange = (e) => setSearchText(e.target.value);
-	const handleLogout = () => router.push("/login");
-
-	// Call backend to increase product
 	const handleIncrease = async (productId) => {
 		try {
 			const res = await fetch(
@@ -81,15 +73,12 @@ const BuyerHome = () => {
 					body: JSON.stringify({ productId }),
 				},
 			);
-			if (!res.ok) throw new Error("Failed to increase product");
 			const data = await res.json();
-			// Update frontend state
 			setProductsList((prev) =>
 				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
-			console.error(err);
-			alert("Cannot increase product. Maybe out of stock.");
+			alert("Out of stock!");
 		}
 	};
 
@@ -103,14 +92,12 @@ const BuyerHome = () => {
 					body: JSON.stringify({ productId }),
 				},
 			);
-			if (!res.ok) throw new Error("Failed to decrease product");
 			const data = await res.json();
 			setProductsList((prev) =>
 				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
 			console.error(err);
-			alert("Cannot decrease product.");
 		}
 	};
 
@@ -124,208 +111,168 @@ const BuyerHome = () => {
 					body: JSON.stringify({ productId }),
 				},
 			);
-			if (!res.ok) throw new Error("Failed to reset product");
 			const data = await res.json();
 			setProductsList((prev) =>
 				prev.map((p) => (p._id === productId ? data.product : p)),
 			);
 		} catch (err) {
 			console.error(err);
-			alert("Cannot reset product.");
 		}
 	};
 
 	if (isLoading)
 		return (
-			<div className="flex justify-center items-center min-h-screen text-2xl font-semibold text-gray-600">
-				Loading products...
-			</div>
-		);
-
-	if (error)
-		return (
-			<div className="flex justify-center items-center min-h-screen">
-				<div className="p-6 text-red-600 bg-red-100 border border-red-400 rounded-lg max-w-xl">
-					<p className="flex items-center gap-2 font-medium">
-						<Info className="w-5 h-5" /> Error: {error}
-					</p>
-				</div>
+			<div className="flex justify-center items-center min-h-screen text-orange-600 font-bold">
+				Loading...
 			</div>
 		);
 
 	return (
-		<div className="bg-gray-50 min-h-screen p-4 md:p-8">
-			{/* Header */}
-			<div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4 gap-3">
-				<div>
+		<div className="bg-[#f4f4f4] min-h-screen">
+			{/* HEADER SECTION - DARK GRAY */}
+			<header className="bg-gray-900 text-white shadow-xl sticky top-0 z-50">
+				<div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
 					<Image
 						src="/eKharidLogo.png"
 						alt="logo"
-						height={100}
-						width={100}
-						className="cursor-pointer"
+						height={50}
+						width={120}
+						className="brightness-100 invert  cursor-pointer"
 					/>
-				</div>
 
-				<div className="flex gap-2 text-black">
-					<input
-						className="border border-black px-2 py-1 rounded"
-						type="text"
-						value={searchText}
-						onChange={handleChange}
-						placeholder="Search products..."
-					/>
-					<button
-						onClick={handleSearch}
-						className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded cursor-pointer"
-					>
-						Search
-					</button>
-					<Link
-						className="bg-indigo-600 hover:bg-indigo-700 w-8 rounded-sm flex justify-center items-center"
-						href={`/buyer/${buyerId}/home/myCart`}
-						title="my carts"
-					>
-						🛒
-					</Link>
-					<Link
-						className="bg-indigo-600 hover:bg-indigo-700  rounded-sm flex justify-center items-center px-2 text-white"
-						href={`/buyer/${buyerId}/home/myOrders`}
-						title="my orders"
-					>
-						🛍️
-					</Link>
-					<button
-						onClick={() => {
-							setSearchText("");
-							getAllProducts();
-						}}
-						className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded cursor-pointer"
-					>
-						Reset
-					</button>
-				</div>
-
-				<button
-					onClick={handleLogout}
-					className="bg-red-600 shadow-md transition hover:shadow-lg text-white hover:bg-red-700 px-4 py-2 rounded-lg font-semibold cursor-pointer"
-				>
-					Logout
-				</button>
-			</div>
-
-			{/* Product List */}
-			<div className="flex flex-wrap justify-center gap-x-6 gap-y-8">
-				{productsList.length === 0 && (
-					<div className="text-center p-10 text-xl font-medium text-gray-500">
-						No products found.
+					{/* Search Bar Container */}
+					<div className="flex flex-1 max-w-lg w-full bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
+						<input
+							className="bg-transparent px-4 py-2 w-full outline-none text-white placeholder-gray-400"
+							type="text"
+							value={searchText}
+							onChange={(e) => setSearchText(e.target.value)}
+							placeholder="Search products..."
+						/>
+						<button
+							onClick={handleSearch}
+							className="bg-orange-600 hover:bg-orange-700 px-4 transition-colors"
+						>
+							<Search className="w-5 h-5" />
+						</button>
 					</div>
-				)}
 
-				<div className="flex w-full flex-wrap items-center justify-between">
-					{productsList.map((product, index) => {
+					<div className="flex items-center gap-4">
+						<Link
+							href={`/buyer/${buyerId}/home/myCart`}
+							className="relative p-2 hover:text-orange-500 transition-colors"
+						>
+							<ShoppingCart className="w-6 h-6" />
+						</Link>
+						<Link
+							href={`/buyer/${buyerId}/home/myOrders`}
+							className="p-2 hover:text-orange-500 transition-colors"
+						>
+							🛍️
+						</Link>
+						<button
+							onClick={() => router.push("/login")}
+							className="flex items-center gap-2 bg-transparent border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white px-4 py-1.5 rounded-lg transition-all font-medium"
+						>
+							<LogOut className="w-4 h-4" /> Logout
+						</button>
+					</div>
+				</div>
+			</header>
+
+			{/* MAIN CONTENT */}
+			<main className="max-w-7xl mx-auto p-6">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+					{productsList.map((product) => {
 						const buyerRecord = product.buyer.find((b) => b.user === buyerId);
 						const currentQuantity = buyerRecord ? buyerRecord.quantity : 0;
 						const isAvailable = product.stock > 0;
+
 						return (
 							<div
 								key={product._id}
-								className="flex flex-col bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 border border-gray-100 w-full sm:w-[48%] md:w-[30%] lg:w-[22%] xl:w-[18%]"
+								className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col overflow-hidden group"
 							>
-								{/* Image */}
+								{/* Image Section */}
 								<Link
 									href={`/buyer/${buyerId}/home/${product._id}/productDetails`}
-									className="block relative h-40"
+									className="relative h-48 overflow-hidden"
 								>
 									<Image
-										className="object-cover"
-										alt={product?.title || "Product Image"}
-										src={`${product.images[0]?.imageUrl}`}
+										className="object-cover transition-transform duration-500 group-hover:scale-110"
+										alt={product.title}
+										src={product.images[0]?.imageUrl}
 										fill
-										sizes="(max-width: 640px) 100vw, 200px"
-										priority={index < 3}
 									/>
-									{/* {product.images[0]?.imageUrl} */}
+									{!isAvailable && (
+										<div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold uppercase tracking-wider">
+											Out of Stock
+										</div>
+									)}
 								</Link>
-								{/* Info */}
-								<div className="p-4 flex flex-col justify-between flex-grow">
-									<div className="mb-2">
-										<h3
-											className="font-bold text-lg text-gray-900 truncate"
-											title={product?.title}
-										>
-											{product?.title}
-										</h3>
-										<p className="text-sm text-indigo-600 font-semibold mt-1">
-											{product?.category}
-										</p>
-										<p className="text-gray-500 text-xs mt-1 line-clamp-2">
-											{product?.description}
-										</p>
-									</div>
-									{/* Price + Stock */}
-									<div className="flex justify-between items-center w-full mt-2 pt-2 border-t border-gray-100">
-										<div className="font-extrabold text-lg text-green-600">
-											Rs.{product?.price?.toLocaleString() || "N/A"}
+
+								{/* Content Section */}
+								<div className="p-4 flex flex-col flex-grow">
+									<span className="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-1">
+										{product.category}
+									</span>
+									<h3 className="text-gray-900 font-bold truncate mb-1">
+										{product.title}
+									</h3>
+									<p className="text-gray-500 text-xs line-clamp-2 mb-4">
+										{product.description}
+									</p>
+
+									<div className="mt-auto">
+										<div className="flex justify-between items-end mb-4">
+											<span className="text-xl font-black text-gray-900">
+												Rs. {product.price.toLocaleString()}
+											</span>
+											<span
+												className={`text-[11px] font-bold ${isAvailable ? "text-green-600" : "text-red-500"}`}
+											>
+												{isAvailable ? `${product.stock} LEFT` : "SOLD OUT"}
+											</span>
 										</div>
-										<div
-											className={`text-sm font-medium ${
-												isAvailable ? "text-green-500" : "text-red-500"
-											}`}
-										>
-											{isAvailable ? `${product.stock} in stock` : "Out of Stock"}
-										</div>
-									</div>
-									{/* Cart Controls */}
-									<div className="mt-4 flex flex-col gap-2">
+
+										{/* Action Buttons */}
 										{currentQuantity === 0 ? (
 											<button
-												className={`w-full py-2 flex items-center justify-center  cursor-pointer font-bold text-white rounded-lg transition-all ${
+												className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
 													isAvailable
-														? "bg-indigo-600 hover:bg-indigo-700 shadow-md"
-														: "bg-gray-400 cursor-not-allowed"
+														? "bg-orange-600 text-white hover:bg-orange-700 shadow-orange-200 shadow-lg"
+														: "bg-gray-300 text-gray-500 cursor-not-allowed"
 												}`}
 												onClick={() => handleIncrease(product._id)}
 												disabled={!isAvailable}
 											>
-												<ShoppingCart className="w-4 h-4 mr-2" />
-												Add to Cart
+												<ShoppingCart className="w-4 h-4" /> Add to Cart
 											</button>
 										) : (
-											<div className="flex flex-col gap-2">
-												<div className="flex items-center justify-between text-xl w-full p-1 border border-indigo-200 rounded-lg">
+											<div className="space-y-2">
+												<div className="flex items-center justify-between bg-gray-100 rounded-lg p-1 border border-gray-200">
 													<button
-														className={`transition ${
-															currentQuantity > 0
-																? "text-indigo-600 hover:text-indigo-700"
-																: "text-gray-400 cursor-not-allowed"
-														}`}
+														className="text-gray-600 hover:text-orange-600 transition-colors"
 														onClick={() => handleDecrease(product._id)}
-														disabled={currentQuantity <= 0}
 													>
-														<AiFillMinusCircle />
+														<AiFillMinusCircle size={28} />
 													</button>
-													<span className="text-base font-semibold text-gray-800">
-														{currentQuantity} in Cart
+													<span className="font-bold text-gray-900">
+														{currentQuantity}
 													</span>
 													<button
-														className={`transition ${
-															currentQuantity < product.stock
-																? "text-indigo-600 hover:text-indigo-700"
-																: "text-gray-400 cursor-not-allowed"
-														}`}
+														className={`${currentQuantity < product.stock ? "text-gray-600 hover:text-orange-600" : "text-gray-300"} transition-colors`}
 														onClick={() => handleIncrease(product._id)}
 														disabled={currentQuantity >= product.stock}
 													>
-														<IoAddCircleSharp />
+														<IoAddCircleSharp size={28} />
 													</button>
 												</div>
 												<button
-													className="w-full py-2 flex items-center justify-center cursor-pointer font-semibold text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
+													className="w-full text-[11px] font-bold text-gray-400 hover:text-red-500 flex items-center justify-center gap-1 uppercase py-1"
 													onClick={() => handleReset(product._id)}
 												>
-													<GrPowerReset className="w-3 h-3 mr-2" />
-													Remove All
+													<GrPowerReset className="w-3 h-3" /> Clear Item
 												</button>
 											</div>
 										)}
@@ -335,7 +282,7 @@ const BuyerHome = () => {
 						);
 					})}
 				</div>
-			</div>
+			</main>
 		</div>
 	);
 };
