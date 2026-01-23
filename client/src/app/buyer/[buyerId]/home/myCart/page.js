@@ -7,7 +7,7 @@ import Image from "next/image";
 const MyCart = () => {
 	const { buyerId } = useParams();
 	const router = useRouter();
-
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const [myCartItems, setMyCartItems] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState("");
@@ -17,7 +17,7 @@ const MyCart = () => {
 		try {
 			setLoading(true);
 			const response = await fetch(
-				`http://localhost:8000/product/${buyerId}/fetchCartItems`
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/fetchCartItems`,
 			);
 			if (!response.ok) throw new Error("API request failed");
 			const data = await response.json();
@@ -44,12 +44,12 @@ const MyCart = () => {
 			}));
 
 			const response = await fetch(
-				`http://localhost:8000/product/${buyerId}/placeOrder`,
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/placeOrder`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ items }),
-				}
+				},
 			);
 
 			const data = await response.json();
@@ -112,7 +112,7 @@ const MyCart = () => {
 						{/* Product Image */}
 						<div className="relative w-full h-56">
 							<Image
-								src={`http://localhost:8000${item.images[0]?.imageUrl}`}
+								src={`${item.images[0]?.imageUrl}`}
 								alt={item.title}
 								fill
 								className="object-cover"
@@ -143,7 +143,7 @@ const MyCart = () => {
 					Total: Rs.
 					{myCartItems.reduce(
 						(sum, item) => sum + item.price * item.quantity,
-						0
+						0,
 					)}
 				</h2>
 				<button

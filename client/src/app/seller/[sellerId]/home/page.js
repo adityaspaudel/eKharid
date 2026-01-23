@@ -134,7 +134,10 @@ export default memo(function SellerHome() {
 		}
 	}, []);
 
-	const handleLogout = () => router.push("/login");
+	const handleLogout = () => {
+		localStorage.removeItem("userToken");
+		router.push("/login");
+	};
 
 	const addProductTogglerUpdate = (e) => {
 		e.preventDefault();
@@ -187,7 +190,7 @@ export default memo(function SellerHome() {
 					{products.map((product) => (
 						<div
 							key={product._id}
-							className="bg-white rounded-xl shadow-sm hover:shadow-lg transition p-4 w-80 border"
+							className="bg-white rounded-xl shadow-sm hover:shadow-lg transition p-4 w-60 border"
 						>
 							{/* Images */}
 							<div className="flex gap-2 overflow-x-auto mb-3 pb-1">
