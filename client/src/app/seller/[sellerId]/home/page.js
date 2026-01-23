@@ -5,19 +5,6 @@ import AddProducts from "@/components/addProducts";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export default memo(function SellerHome() {
 	const { sellerId } = useParams();
@@ -34,7 +21,6 @@ export default memo(function SellerHome() {
 	});
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [toggleAddProduct, setToggleAddProduct] = useState("hidden");
-	const userToken = localStorage.getItem("userToken");
 
 	// Fetch seller products
 	const fetchProducts = useCallback(async () => {
@@ -57,6 +43,7 @@ export default memo(function SellerHome() {
 	const handleEdit = (e, id) => {
 		e.preventDefault();
 		const product = products.find((p) => p._id === id);
+
 		if (editingProductId === id) {
 			setEditingProductId(null);
 			setProductChange({
@@ -82,15 +69,17 @@ export default memo(function SellerHome() {
 
 	const handleChange = (e) =>
 		setProductChange({ ...productChange, [e.target.name]: e.target.value });
+
 	const handleImageChange = (e) => {
-		if (Array.from(e.target.files).length <= 5) {
-			setSelectedImages(Array.from(e.target.files));
-		} else if (Array.from(e.target.files).length > 5) {
-			alert("you cant save more than 5 images");
+		const files = Array.from(e.target.files);
+		if (files.length <= 5) {
+			setSelectedImages(files);
+		} else {
+			alert("You can't upload more than 5 images");
 		}
 	};
 
-	// Save / update product
+	// Update product
 	const handleSaveAndUpdateProduct = useCallback(
 		async (e, productId) => {
 			e.preventDefault();
@@ -127,98 +116,86 @@ export default memo(function SellerHome() {
 		},
 		[productChange, selectedImages, fetchProducts],
 	);
-	const handleDelete = useCallback(
-		async (e, productId) => {
-			e.preventDefault();
-			try {
-				const res = await axios.delete(
-					`http://localhost:8000/product/${productId}/deleteProductById`,
-				);
 
-				if (res.status === 200) {
-					setProducts((prev) => prev.filter((p) => p._id !== productId));
-					alert("Product deleted successfully!");
-				}
-			} catch (error) {
-				console.error("Error deleting product:", error);
-				alert("Failed to delete product.");
+	// Delete product
+	const handleDelete = useCallback(async (e, productId) => {
+		e.preventDefault();
+		try {
+			const res = await axios.delete(
+				`http://localhost:8000/product/${productId}/deleteProductById`,
+			);
+			if (res.status === 200) {
+				setProducts((prev) => prev.filter((p) => p._id !== productId));
+				alert("Product deleted successfully!");
 			}
-		},
-		[setProducts],
-	);
-	// handle logout
+		} catch (error) {
+			console.error("Error deleting product:", error);
+			alert("Failed to delete product.");
+		}
+	}, []);
+
 	const handleLogout = () => router.push("/login");
 
 	const addProductTogglerUpdate = (e) => {
 		e.preventDefault();
-
 		setToggleAddProduct((prev) => (prev === "hidden" ? "block" : "hidden"));
 	};
 
-	console.log("toggleAddProduct", toggleAddProduct);
 	return (
-		<div className="bg-indigo-200 text-black p-6 flex flex-col items-center justify-center gap-4 w-full text-sm">
-			<div className="flex justify-between items-center w-full ">
+		<div className="min-h-screen bg-gradient-to-br from-indigo-100 to-indigo-200 p-6 flex flex-col gap-6 text-sm">
+			{/* Header */}
+			<div className="flex justify-between items-center bg-white rounded-xl shadow px-6 py-3">
 				<Image
-					className="cursor-pointer"
 					src="/eKharidLogo.png"
 					alt="eKharidLogo"
-					height={100}
-					width={100}
+					height={80}
+					width={80}
+					className="cursor-pointer"
 				/>
 				<button
 					onClick={handleLogout}
-					className="bg-red-500 text-white cursor-pointer not-last:text-white px-4 py-2 rounded mt-6 shadow hover:shadow-red-600 hover:shadow-sm"
+					className="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition"
 				>
 					Logout
 				</button>
 			</div>
-			<div className="flex flex-col font-bold text-white items-center text-2xl justify-center ">
+
+			{/* Add product button */}
+			<div className="flex justify-center">
 				<button
 					onClick={addProductTogglerUpdate}
-					className={`bg-green-400 px-4  hover:bg-green-500 rounded-md cursor-pointer`}
+					className="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition"
 				>
-					Add a Product
+					+ Add Product
 				</button>
 			</div>
-			<div
-				className={`${toggleAddProduct} bg-white flex flex-col items-center justify-center w-96`}
-			>
-				<AddProducts
-					sellerId={sellerId}
-					fetchProducts={fetchProducts}
-					className={`${toggleAddProduct} `}
-				/>
-				{products.length > 0 ? (
-					<div>
-						{products.map((pd, idx) => (
-							<div key={idx}></div>
-						))}
-					</div>
-				) : (
-					<div></div>
-				)}
-			</div>
-			<h1 className="text-2xl font-bold w-full text-center">
-				My Products List
-			</h1>
 
+			{/* Add Product Form */}
+			<div
+				className={`${toggleAddProduct} bg-white rounded-xl shadow-md p-4 w-full max-w-md mx-auto`}
+			>
+				<AddProducts sellerId={sellerId} fetchProducts={fetchProducts} />
+			</div>
+
+			<h1 className="text-2xl font-bold text-center">My Products List</h1>
+
+			{/* Product List */}
 			{products.length === 0 ? (
-				<p className="text-gray-600 mt-4">No products found.</p>
+				<p className="text-center text-gray-600">No products found.</p>
 			) : (
-				<div className="flex flex-wrap items-center justify-center  gap-2 ">
+				<div className="flex flex-wrap justify-center gap-4">
 					{products.map((product) => (
 						<div
 							key={product._id}
-							className="bg-orange-100 hover:bg-amber-200 rounded-md shadow p-4 w-78 min-h-80 border-gray-600 hover:shadow-md"
+							className="bg-white rounded-xl shadow-sm hover:shadow-lg transition p-4 w-80 border"
 						>
-							{/* Product Images */}
-							<div className="flex gap-2 overflow-x-auto mb-2">
+							{/* Images */}
+							<div className="flex gap-2 overflow-x-auto mb-3 pb-1">
 								{product.images.map((img, idx) => (
 									<Image
 										key={idx}
-										src={`${img.imageUrl}`}
-										alt={`Product image ${idx + 1}`}
+										src={img.imageUrl}
+										alt={`Product ${idx + 1}`}
 										width={120}
 										height={120}
 										className="rounded object-cover border shrink-0"
@@ -226,69 +203,60 @@ export default memo(function SellerHome() {
 								))}
 							</div>
 
-							{/* Product Details */}
-							<div className="flex flex-col gap-0 text-sm mb-2">
+							{/* Details */}
+							<div className="flex flex-col gap-1 text-sm mb-2">
 								{["title", "description", "price", "category", "stock"].map(
 									(field) => (
-										<input
-											key={field}
-											value={product[field]}
-											disabled
-											className=" w-full"
-										/>
+										<p key={field} className="text-gray-700 truncate">
+											<span className="font-medium capitalize">{field}:</span>{" "}
+											{product[field]}
+										</p>
 									),
 								)}
 							</div>
-							<div className="flex justify-between items-center ">
-								{/* Edit Button */}
+
+							{/* Actions */}
+							<div className="flex justify-between items-center mt-2">
 								<button
 									onClick={(e) => handleEdit(e, product._id)}
 									disabled={
 										editingProductId && editingProductId !== product._id
 									}
-									className="px-2  rounded cursor-pointer hover:bg-amber-200 text-indigo-500"
+									className="text-indigo-600 font-medium hover:underline"
 								>
 									{editingProductId === product._id ? "Close" : "Edit"}
 								</button>
 
 								<button
 									onClick={(e) => handleDelete(e, product._id)}
-									className="text-sm hover:text-md cursor-pointer text-red-500 hover:bg-amber-200 px-2"
+									className="text-red-500 font-medium hover:underline"
 								>
-									delete
+									Delete
 								</button>
 							</div>
 
 							{/* Edit Form */}
 							{editingProductId === product._id && (
-								<div className="bg-gray-200 p-4 rounded mt-3 flex flex-col">
+								<div className="bg-gray-50 border rounded-lg p-4 mt-4 flex flex-col gap-2">
 									{Object.keys(productChange).map((field) => (
-										<div
-											key={field}
-											className="flex text-sm justify-between items-center "
-										>
-											<label className="min-w-18 capitalize overflow-hidden">
-												{field}:
-											</label>
+										<div key={field} className="flex flex-col text-sm gap-1">
+											<label className="capitalize font-medium">{field}</label>
 											<input
 												name={field}
 												value={productChange[field]}
 												onChange={handleChange}
-												className="border-b   px-2 "
+												className="border rounded px-2 py-1"
 											/>
 										</div>
 									))}
 
-									{/* Upload New Images */}
-									<div className="mt-3">
-										<label className="block font-medium mb-1">
-											Upload New Images:
-										</label>
+									<div>
+										<label className="font-medium">Upload New Images</label>
 										<input
 											type="file"
 											multiple
 											onChange={handleImageChange}
-											className="w-full text-sm cursor-pointer bg-green-400 rounded-sm px-2"
+											className="mt-1 text-sm"
 										/>
 										{selectedImages.length > 0 && (
 											<div className="flex gap-2 mt-2 overflow-x-auto">
@@ -306,19 +274,18 @@ export default memo(function SellerHome() {
 										)}
 									</div>
 
-									{/* Update / Cancel */}
 									<div className="flex gap-2 mt-3">
 										<button
 											onClick={(e) =>
 												handleSaveAndUpdateProduct(e, product._id)
 											}
-											className="bg-indigo-600 text-white px-3 py-1 rounded cursor-pointer"
+											className="bg-indigo-600 hover:bg-indigo-700 transition text-white px-3 py-1 rounded"
 										>
 											Update
 										</button>
 										<button
 											onClick={() => setEditingProductId(null)}
-											className="bg-gray-500 text-white px-3 py-1 rounded cursor-pointer"
+											className="bg-gray-400 hover:bg-gray-500 transition text-white px-3 py-1 rounded"
 										>
 											Cancel
 										</button>
