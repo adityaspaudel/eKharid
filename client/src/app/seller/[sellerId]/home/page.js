@@ -134,7 +134,10 @@ export default memo(function SellerHome() {
 		}
 	}, []);
 
-	const handleLogout = () => router.push("/login");
+	const handleLogout = () => {
+		localStorage.removeItem("userToken");
+		router.push("/login");
+	};
 
 	const addProductTogglerUpdate = (e) => {
 		e.preventDefault();
