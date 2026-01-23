@@ -184,7 +184,11 @@ export default memo(function SellerHome() {
 			<div
 				className={`${toggleAddProduct} bg-white flex flex-col items-center justify-center w-96`}
 			>
-				<AddProducts sellerId={sellerId} className={`${toggleAddProduct} `} />
+				<AddProducts
+					sellerId={sellerId}
+					fetchProducts={fetchProducts}
+					className={`${toggleAddProduct} `}
+				/>
 				{products.length > 0 ? (
 					<div>
 						{products.map((pd, idx) => (
