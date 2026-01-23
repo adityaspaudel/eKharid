@@ -105,7 +105,7 @@ function AddProducts({ sellerId, fetchProducts }) {
 	);
 
 	return (
-		<main className="p-10 flex flex-col gap-6 max-w-96 mx-auto w-[400px]">
+		<main className="p-10 flex flex-col gap-6 max-w-96 mx-auto w-[400px] text-black">
 			{/* <h1 className="text-3xl font-bold text-center"></h1> */}
 
 			{message && (
