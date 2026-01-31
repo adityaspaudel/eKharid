@@ -11,12 +11,12 @@ const MyOrders = () => {
 	const [orders, setOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState("");
-
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const fetchOrders = useCallback(async () => {
 		try {
 			setLoading(true);
 			const res = await fetch(
-				`http://localhost:8000/product/${buyerId}/getOrders`,
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/getOrders`,
 			);
 			if (!res.ok) throw new Error("Failed to fetch orders");
 

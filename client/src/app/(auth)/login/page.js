@@ -10,6 +10,7 @@ import Image from "next/image";
 export default function SignInPage() {
 	const [submittedData, setSubmittedData] = useState(null);
 	const router = useRouter();
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const passwordRef1 = useRef();
 	const [showHidePassword, setShowHidePassword] = useState(false);
 	const [inputType, setInputType] = useState("password");
@@ -58,7 +59,7 @@ export default function SignInPage() {
 					onSubmit={async (values, { setSubmitting, resetForm }) => {
 						try {
 							const response = await fetch(
-								"http://localhost:8000/user/userLogin",
+								`${NEXT_PUBLIC_API_URL}/user/userLogin`,
 								{
 									method: "POST",
 									headers: { "Content-Type": "application/json" },
