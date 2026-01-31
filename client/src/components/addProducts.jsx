@@ -43,7 +43,7 @@ function AddProducts({ sellerId, fetchProducts }) {
 		if (!sellerId) return;
 		try {
 			const { data } = await axios.get(
-				`http://localhost:8000/seller/${sellerId}/getSellerDetails`,
+				`${NEXT_PUBLIC_API_URL}/seller/${sellerId}/getSellerDetails`,
 			);
 			console.log("Seller data:", data);
 
@@ -76,7 +76,7 @@ function AddProducts({ sellerId, fetchProducts }) {
 				images.forEach((file) => formData.append("images", file));
 
 				const { data } = await axios.post(
-					`http://localhost:8000/seller/${sellerId}/addProducts`,
+					`${NEXT_PUBLIC_API_URL}/seller/${sellerId}/addProducts`,
 					formData,
 					{ headers: { "Content-Type": "multipart/form-data" } },
 				);

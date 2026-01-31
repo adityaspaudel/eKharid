@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 export default function SignupPage() {
 	const [submittedData, setSubmittedData] = useState(null);
 	const [apiMessage, setApiMessage] = useState(null);
+
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const router = useRouter();
 	// ✅ Yup Validation Schema
 	const SignupSchema = Yup.object().shape({
@@ -63,7 +65,7 @@ export default function SignupPage() {
 					onSubmit={async (values, { setSubmitting, resetForm }) => {
 						try {
 							const response = await fetch(
-								"http://localhost:8000/user/userRegistration",
+								`${NEXT_PUBLIC_API_URL}/user/userRegistration`,
 								{
 									method: "POST",
 									headers: { "Content-Type": "application/json" },

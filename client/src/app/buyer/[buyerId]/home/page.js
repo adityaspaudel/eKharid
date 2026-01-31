@@ -9,7 +9,7 @@ import { IoAddCircleSharp } from "react-icons/io5";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 
-const IMAGE_BASE_URL = "http://localhost:8000";
+const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const BuyerHome = () => {
 	const { buyerId } = useParams();
@@ -24,7 +24,9 @@ const BuyerHome = () => {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await fetch(`${IMAGE_BASE_URL}/product/getAllProducts`);
+			const response = await fetch(
+				`${NEXT_PUBLIC_API_URL}/product/getAllProducts`,
+			);
 			if (!response.ok)
 				throw new Error(`HTTP error! status: ${response.status}`);
 			const data = await response.json();
@@ -48,11 +50,14 @@ const BuyerHome = () => {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await fetch(`${IMAGE_BASE_URL}/product/searchProducts`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ searchText }),
-			});
+			const response = await fetch(
+				`${NEXT_PUBLIC_API_URL}/product/searchProducts`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ searchText }),
+				},
+			);
 			if (!response.ok) throw new Error("Failed to search product");
 			const data = await response.json();
 			setProductsList(data);
@@ -66,7 +71,7 @@ const BuyerHome = () => {
 	const handleIncrease = async (productId) => {
 		try {
 			const res = await fetch(
-				`${IMAGE_BASE_URL}/product/${buyerId}/increaseQuantity`,
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/increaseQuantity`,
 				{
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
@@ -85,7 +90,7 @@ const BuyerHome = () => {
 	const handleDecrease = async (productId) => {
 		try {
 			const res = await fetch(
-				`${IMAGE_BASE_URL}/product/${buyerId}/decreaseQuantity`,
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/decreaseQuantity`,
 				{
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
@@ -104,7 +109,7 @@ const BuyerHome = () => {
 	const handleReset = async (productId) => {
 		try {
 			const res = await fetch(
-				`${IMAGE_BASE_URL}/product/${buyerId}/resetQuantity`,
+				`${NEXT_PUBLIC_API_URL}/product/${buyerId}/resetQuantity`,
 				{
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },

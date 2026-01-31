@@ -21,12 +21,12 @@ export default memo(function SellerHome() {
 	});
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [toggleAddProduct, setToggleAddProduct] = useState("hidden");
-
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const fetchProducts = useCallback(async () => {
 		if (!sellerId) return;
 		try {
 			const { data } = await axios.get(
-				`http://localhost:8000/seller/${sellerId}/getProducts`,
+				`${NEXT_PUBLIC_API_URL}/seller/${sellerId}/getProducts`,
 			);
 			setProducts(data);
 		} catch (error) {
@@ -80,7 +80,7 @@ export default memo(function SellerHome() {
 				selectedImages.forEach((file) => formData.append("images", file));
 
 				const { data } = await axios.put(
-					`http://localhost:8000/product/${productId}/updateProduct`,
+					`${NEXT_PUBLIC_API_URL}/product/${productId}/updateProduct`,
 					formData,
 					{ headers: { "Content-Type": "multipart/form-data" } },
 				);
@@ -99,7 +99,7 @@ export default memo(function SellerHome() {
 		if (!confirm("Are you sure you want to delete this product?")) return;
 		try {
 			const res = await axios.delete(
-				`http://localhost:8000/product/${productId}/deleteProductById`,
+				`${NEXT_PUBLIC_API_URL}/product/${productId}/deleteProductById`,
 			);
 			if (res.status === 200) {
 				setProducts((prev) => prev.filter((p) => p._id !== productId));
