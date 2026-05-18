@@ -20,6 +20,7 @@ function AddProducts({ sellerId, fetchProducts }) {
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState("");
 
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	// ✅ handleChange — no need for preventDefault in input handlers
 	const handleChange = (e) => {
 		setProduct({ ...product, [e.target.name]: e.target.value });
@@ -169,8 +170,7 @@ function AddProducts({ sellerId, fetchProducts }) {
 				<button
 					type="submit"
 					disabled={loading}
-					className="bg-indigo-600 text-white py-2 rounded"
-				>
+					className="bg-indigo-600 text-white py-2 rounded">
 					{loading ? "adding..." : "Add Product"}
 				</button>
 			</form>
